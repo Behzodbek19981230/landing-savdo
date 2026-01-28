@@ -41,7 +41,7 @@ export function ProductDetailPage() {
                 </button>
             </nav>
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-24">
+            <div className=" mx-auto px-4 sm:px-6 lg:px-8 py-20 lg:py-24">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 lg:gap-20 items-start">
                     {/* Left: Images */}
                     <motion.div

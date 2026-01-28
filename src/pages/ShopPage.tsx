@@ -18,7 +18,7 @@ export function ShopPage() {
         <div className="min-h-screen pb-20">
             {/* Header */}
             <header className="sticky top-0 z-30 bg-market-bg/80 backdrop-blur-md border-b border-blue-100">
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+                <div className=" mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
                     <div className="flex items-center gap-2">
                         <div className="w-10 h-10 bg-gradient-to-tr from-market-orange to-market-pink rounded-xl flex items-center justify-center text-white shadow-lg shadow-market-orange/30">
                             <ShoppingBag size={20} strokeWidth={3} />
@@ -50,7 +50,7 @@ export function ShopPage() {
                 </div>
             </header>
 
-            <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+            <main className=" mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 {/* Hero / Welcome */}
                 {/* <div className="mb-12 text-center max-w-2xl mx-auto">
                     <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4">
