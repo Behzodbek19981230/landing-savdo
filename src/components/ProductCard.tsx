@@ -55,18 +55,17 @@ export function ProductCard({ product }: ProductCardProps) {
 
                 {/* Image Container */}
                 <div className="relative aspect-[4/5] overflow-hidden rounded-2xl bg-gray-100 mb-4">
-                    <img
+                    <img onClick={handleImageClick}
                         src={product.images[0]}
                         alt={product.name}
-                        className="h-full w-full object-cover object-center transition-transform duration-300 group-hover:scale-105"
+                        className="h-full w-full cursor-pointer object-cover object-center transition-transform duration-300 group-hover:scale-105"
                     />
 
                     {/* Gradient Overlay on Hover */}
                     <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
                     {/* Action Buttons - Show on Hover */}
-                    <div className="absolute inset-0 flex items-center justify-center gap-3 opacity-0 group-hover:opacity-100 transition-all duration-300">
-                        {/* View Image Button */}
+                    {/* <div className="absolute inset-0 flex items-center justify-center gap-3 opacity-0 group-hover:opacity-100 transition-all duration-300">
                         <motion.button
                             onClick={handleImageClick}
                             className="p-3 bg-white text-gray-900 rounded-full shadow-lg hover:bg-gray-100 transition-colors"
@@ -77,7 +76,6 @@ export function ProductCard({ product }: ProductCardProps) {
                             <Eye size={20} strokeWidth={2.5} />
                         </motion.button>
 
-                        {/* Add to Cart Button */}
                         <motion.button
                             onClick={handleQuickAdd}
                             className="p-3 bg-market-pink text-white rounded-full shadow-lg hover:bg-market-orange transition-colors"
@@ -87,7 +85,7 @@ export function ProductCard({ product }: ProductCardProps) {
                         >
                             <ShoppingCart size={20} strokeWidth={2.5} />
                         </motion.button>
-                    </div>
+                    </div> */}
 
                     {/* Category Tag */}
                     <span className="absolute top-3 left-3 px-3 py-1 bg-white/90 backdrop-blur-sm text-xs font-bold text-gray-900 rounded-full">
