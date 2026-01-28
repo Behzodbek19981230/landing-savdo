@@ -1,142 +1,148 @@
 import { Product } from '../types';
 
 export const products: Product[] = [
-{
-  id: '1',
-  name: 'Retro Boombox',
-  price: 129.99,
-  category: 'Electronics',
-  description:
-  'Blast your tunes with this colorful, vintage-inspired boombox. Features high-fidelity sound, Bluetooth connectivity, and a rechargeable battery that lasts all day.',
-  images: [
-  'https://images.unsplash.com/photo-1558403194-611308249627?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1461360228754-6e81c478b882?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1593359677879-a4bb92f829d1?auto=format&fit=crop&w=800&q=80'],
+    {
+        id: '1',
+        name: 'Klassik Chinni Kosa',
+        price: 45000,
+        category: 'Kosalar',
+        description:
+            'Yuqori sifatli chinni kosalar to\'plami. Issiq va sovuq ichimliklar uchun ideal. Zamonaviy dizayn va bardoshlilik.',
+        images: [
+            '/images/photo_2026-01-28_15-00-41.jpg',
+            'https://images.unsplash.com/photo-1610701596007-11502861dcfa?auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&w=800&q=80'],
 
-  colors: ['#FF6B35', '#00D9FF', '#222222'],
-  rating: 4.8
-},
-{
-  id: '2',
-  name: 'Neon Sneakers',
-  price: 89.5,
-  category: 'Fashion',
-  description:
-  'Step up your street style with these ultra-comfortable, eye-catching sneakers. Designed for urban explorers who want to stand out from the crowd.',
-  images: [
-  'https://images.unsplash.com/photo-1542291026-7eec264c27ff?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1608231387042-66d1773070a5?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1606107557195-0e29a4b5b4aa?auto=format&fit=crop&w=800&q=80'],
+        colors: ['#FFFFFF', '#E8F4F8', '#F5E6D3'],
+        sizes: ['250ml', '350ml', '500ml'],
+        rating: 4.8
+    },
+    {
+        id: '2',
+        name: 'Zamonaviy Chinni Likopchalar',
+        price: 65000,
+        category: 'Likopchalar',
+        description:
+            'Oilaviy foydalanish uchun chiroyli chinni likopchalar to\'plami. 6 dona likopcha va noyob dizayn. Yuvilish mashinasida yuvish mumkin.',
+        images: [
+            '/images/photo_2026-01-28_15-00-51.jpg',
+            'https://images.unsplash.com/photo-1587132117816-061c97700ac4?auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1616486029423-aaa4789e8c9a?auto=format&fit=crop&w=800&q=80'],
 
-  colors: ['#FF006E', '#B4FF39', '#FFFFFF'],
-  sizes: ['US 7', 'US 8', 'US 9', 'US 10', 'US 11'],
-  rating: 4.9
-},
-{
-  id: '3',
-  name: 'Analog Instant Camera',
-  price: 75.0,
-  category: 'Electronics',
-  description:
-  'Capture memories instantly with this cute and compact analog camera. Perfect for parties, travel, and creating physical keepsakes.',
-  images: [
-  'https://images.unsplash.com/photo-1526170375885-4d8ecf77b99f?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1517260739337-6799d239ce83?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1621623728639-668c2b536288?auto=format&fit=crop&w=800&q=80'],
+        colors: ['#FFFFFF', '#D4E4F7', '#FFE8D6'],
+        sizes: ['150ml', '200ml', '250ml'],
+        rating: 4.9
+    },
+    {
+        id: '3',
+        name: 'Premium Chinni Tarelkalar',
+        price: 120000,
+        category: 'Tarelkalar',
+        description:
+            'Nafis chinni tarelkalar to\'plami. 12 dona turli o\'lchamdagi tarelkalar. Bayram dasturxonlari va kundalik foydalanish uchun.',
+        images: [
+            '/images/photo_2026-01-28_15-00-56.jpg',
+            'https://images.unsplash.com/photo-1610701596007-11502861dcfa?auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1578500494198-246f612d3b3d?auto=format&fit=crop&w=800&q=80'],
 
-  colors: ['#FFD23F', '#FF006E', '#00D9FF'],
-  rating: 4.7
-},
-{
-  id: '4',
-  name: 'Artisan Donuts',
-  price: 24.0,
-  category: 'Food',
-  description:
-  'A box of 6 handcrafted donuts with exotic glazes and toppings. Freshly baked every morning using premium ingredients.',
-  images: [
-  'https://images.unsplash.com/photo-1551024601-bec78aea704b?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1626094309830-abbb0c99da4a?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1551106652-a5bcf4b29ab6?auto=format&fit=crop&w=800&q=80'],
+        colors: ['#FFFFFF', '#E8F0F8', '#F0E6D3'],
+        sizes: ['Kichik (18cm)', 'O\'rta (22cm)', 'Katta (28cm)'],
+        rating: 4.7
+    },
+    {
+        id: '4',
+        name: 'Klassik Chinni Choynak',
+        price: 85000,
+        category: 'Choyniklar',
+        description:
+            'An\'anaviy uslubdagi chinni choynak. 1.2 litr sig\'im. Issiqlikni uzoq vaqt saqlaydi. Oilaviy choy marosimi uchun ideal.',
+        images: [
+            '/images/photo_2026-01-28_15-01-00.jpg',
+            'https://images.unsplash.com/photo-1564890369478-c89ca6d9cde9?auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1556881286-fc6915169721?auto=format&fit=crop&w=800&q=80'],
 
-  colors: ['#FFC0CB', '#8B4513', '#FFFDD0'],
-  rating: 5.0
-},
-{
-  id: '5',
-  name: 'Minimalist Plant Pot',
-  price: 35.0,
-  category: 'Home',
-  description:
-  'Add some greenery to your space with this sleek, ceramic plant pot. Features a drainage hole and matching saucer.',
-  images: [
-  'https://images.unsplash.com/photo-1485955900006-10f4d324d411?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1459156212016-c812468e2115?auto=format&fit=crop&w=800&q=80'],
+        colors: ['#FFFFFF', '#E8F4F8', '#FFE8D6'],
+        sizes: ['0.8L', '1.2L', '1.5L'],
+        rating: 5.0
+    },
+    {
+        id: '5',
+        name: 'Elegant Chinni Karafka',
+        price: 95000,
+        category: 'Karafkalar',
+        description:
+            'Zamonaviy dizayndagi chinni karafka. Suv, sharbat va boshqa ichimliklar uchun. Muzlatgichda saqlash mumkin.',
+        images: [
+            '/images/photo_2026-01-28_15-01-04.jpg',
+            'https://images.unsplash.com/photo-1610701596007-11502861dcfa?auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1578500351865-d8bb7d9e5a7e?auto=format&fit=crop&w=800&q=80'],
 
-  colors: ['#FFFFFF', '#333333', '#B4FF39'],
-  sizes: ['Small', 'Medium', 'Large'],
-  rating: 4.6
-},
-{
-  id: '6',
-  name: 'Vintage Denim Jacket',
-  price: 110.0,
-  category: 'Fashion',
-  description:
-  'A classic denim jacket with a modern twist. Features custom embroidery and distressed details for a lived-in look.',
-  images: [
-  'https://images.unsplash.com/photo-1576871337622-98d48d1cf531?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1543076447-215ad9ba6923?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1527016021513-b09758b777d5?auto=format&fit=crop&w=800&q=80'],
+        colors: ['#FFFFFF', '#E8F0F8', '#D4E4F7'],
+        sizes: ['1L', '1.5L', '2L'],
+        rating: 4.6
+    },
+    {
+        id: '6',
+        name: 'Naqshli Chinni Kosalar To\'plami',
+        price: 75000,
+        category: 'Kosalar',
+        description:
+            'O\'zbekona naqshli chinni kosalar. 6 dona turli xil naqshli kosa. Milliy uslubda bezatilgan va zamonaviy sifat.',
+        images: [
+            '/images/photo_2026-01-28_15-01-07.jpg',
+            'https://images.unsplash.com/photo-1578916171728-46686eac8d58?auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1610701596007-11502861dcfa?auto=format&fit=crop&w=800&q=80'],
 
-  colors: ['#1E90FF', '#000000'],
-  sizes: ['S', 'M', 'L', 'XL'],
-  rating: 4.8
-},
-{
-  id: '7',
-  name: 'Mechanical Keyboard',
-  price: 145.0,
-  category: 'Electronics',
-  description:
-  'Clicky, tactile, and colorful. This mechanical keyboard improves your typing experience and brightens up your desk setup.',
-  images: [
-  'https://images.unsplash.com/photo-1595225476474-87563907a212?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1587829741301-dc798b91a603?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1618384887929-16ec33fab9ef?auto=format&fit=crop&w=800&q=80'],
+        colors: ['#FFFFFF', '#4A90E2', '#D4AF37'],
+        sizes: ['200ml', '300ml', '400ml'],
+        rating: 4.8
+    },
+    {
+        id: '7',
+        name: 'Lux Chinni Likopchalar Komplekti',
+        price: 110000,
+        category: 'Likopchalar',
+        description:
+            'Premium chinni likopchalar. Oltin rangli naqshlar bilan bezatilgan. 12 dona likopcha. Maxsus tadbirlarga mos.',
+        images: [
+            '/images/photo_2026-01-28_15-01-11.jpg',
+            'https://images.unsplash.com/photo-1587132117816-061c97700ac4?auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1616486029423-aaa4789e8c9a?auto=format&fit=crop&w=800&q=80'],
 
-  colors: ['#FFFFFF', '#222222', '#FF006E'],
-  rating: 4.9
-},
-{
-  id: '8',
-  name: 'Fresh Fruit Basket',
-  price: 45.0,
-  category: 'Food',
-  description:
-  "A curated selection of the season's freshest fruits. Locally sourced and delivered in a reusable woven basket.",
-  images: [
-  'https://images.unsplash.com/photo-1610832958506-aa56368176cf?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1519996529931-28324d1a6390?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1550989460-0adf9ea622e2?auto=format&fit=crop&w=800&q=80'],
+        colors: ['#FFFFFF', '#FFE8D6', '#D4AF37'],
+        sizes: ['180ml', '220ml', '280ml'],
+        rating: 4.9
+    },
+    {
+        id: '8',
+        name: 'Bayrma Tarelkalar Seti',
+        price: 180000,
+        category: 'Tarelkalar',
+        description:
+            'Bayram dasturxonlari uchun maxsus chinni tarelkalar. 18 dona turli o\'lchamdagi tarelka. Nozik naqshlar va yuqori sifat.',
+        images: [
+            '/images/photo_2026-01-28_15-01-16.jpg',
+            'https://images.unsplash.com/photo-1610701596007-11502861dcfa?auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1578500494198-246f612d3b3d?auto=format&fit=crop&w=800&q=80'],
 
-  colors: ['#FFA500', '#FF0000', '#008000'],
-  rating: 4.9
-},
-{
-  id: '9',
-  name: 'Abstract Wall Art',
-  price: 65.0,
-  category: 'Home',
-  description:
-  'Vibrant abstract print to bring energy to your walls. Printed on high-quality archival paper with fade-resistant inks.',
-  images: [
-  'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1549490349-8643362247b5?auto=format&fit=crop&w=800&q=80',
-  'https://images.unsplash.com/photo-1550684848-fac1c5b4e853?auto=format&fit=crop&w=800&q=80'],
+        colors: ['#FFFFFF', '#FFE8D6', '#D4AF37'],
+        sizes: ['Kichik', 'O\'rta', 'Katta'],
+        rating: 4.9
+    },
+    {
+        id: '9',
+        name: 'Turk Uslubidagi Choynak',
+        price: 135000,
+        category: 'Choyniklar',
+        description:
+            'Turk uslubidagi noyob chinni choynak. Qo\'l bilan bezatilgan naqshlar. 1.5 litr sig\'im. Kolleksiya uchun ham mos.',
+        images: [
+            'https://images.unsplash.com/photo-1594631252845-29fc4cc8cde9?auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1564890369478-c89ca6d9cde9?auto=format&fit=crop&w=800&q=80',
+            'https://images.unsplash.com/photo-1556881286-fc6915169721?auto=format&fit=crop&w=800&q=80'],
 
-  colors: ['#FF6B35', '#8338EC', '#00D9FF'],
-  sizes: ['12x18', '18x24', '24x36'],
-  rating: 4.5
-}];
+        colors: ['#4A90E2', '#D4AF37', '#FFFFFF'],
+        sizes: ['1L', '1.5L', '2L'],
+        rating: 4.5
+    },
+];
