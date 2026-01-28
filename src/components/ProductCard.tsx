@@ -13,9 +13,8 @@ export function ProductCard({ product }: ProductCardProps) {
     const [isImageOpen, setIsImageOpen] = useState(false);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
     const [scale, setScale] = useState(1);
-    const [position, setPosition] = useState({ x: 0, y: 0 });
-    const [isDragging, setIsDragging] = useState(false);
-    const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
+    const imageContainerRef = React.useRef<HTMLDivElement>(null);
+    const touchStartRef = React.useRef({ distance: 0, scale: 1 });
 
     const handleQuickAdd = (e: React.MouseEvent) => {
         e.preventDefault();
@@ -28,7 +27,6 @@ export function ProductCard({ product }: ProductCardProps) {
         e.stopPropagation();
         setIsImageOpen(true);
         setScale(1);
-        setPosition({ x: 0, y: 0 });
     };
 
     const nextImage = () => {
@@ -36,7 +34,10 @@ export function ProductCard({ product }: ProductCardProps) {
             prev === product.images.length - 1 ? 0 : prev + 1
         );
         setScale(1);
-        setPosition({ x: 0, y: 0 });
+        if (imageContainerRef.current) {
+            imageContainerRef.current.scrollTop = 0;
+            imageContainerRef.current.scrollLeft = 0;
+        }
     };
 
     const prevImage = () => {
@@ -44,53 +45,29 @@ export function ProductCard({ product }: ProductCardProps) {
             prev === 0 ? product.images.length - 1 : prev - 1
         );
         setScale(1);
-        setPosition({ x: 0, y: 0 });
+        if (imageContainerRef.current) {
+            imageContainerRef.current.scrollTop = 0;
+            imageContainerRef.current.scrollLeft = 0;
+        }
     };
 
     const handleWheel = (e: React.WheelEvent) => {
-        e.preventDefault();
-        const delta = e.deltaY > 0 ? -0.1 : 0.1;
-        setScale((prev) => Math.min(Math.max(1, prev + delta), 4));
-    };
-
-    const handleMouseDown = (e: React.MouseEvent) => {
-        if (scale > 1) {
+        if (e.ctrlKey || e.metaKey) {
             e.preventDefault();
-            setIsDragging(true);
-            setDragStart({ x: e.clientX - position.x, y: e.clientY - position.y });
+            const delta = e.deltaY > 0 ? -0.2 : 0.2;
+            setScale((prev) => Math.min(Math.max(1, prev + delta), 4));
         }
     };
-
-    const handleMouseMove = (e: React.MouseEvent) => {
-        if (isDragging && scale > 1) {
-            e.preventDefault();
-            setPosition({
-                x: e.clientX - dragStart.x,
-                y: e.clientY - dragStart.y
-            });
-        }
-    };
-
-    const handleMouseUp = () => {
-        setIsDragging(false);
-    };
-
-    const touchStartRef = React.useRef({ x: 0, y: 0, distance: 0 });
 
     const handleTouchStart = (e: React.TouchEvent) => {
         if (e.touches.length === 2) {
-            // Pinch zoom start
             const touch1 = e.touches[0];
             const touch2 = e.touches[1];
             const distance = Math.hypot(
                 touch2.clientX - touch1.clientX,
                 touch2.clientY - touch1.clientY
             );
-            touchStartRef.current = { x: position.x, y: position.y, distance };
-        } else if (e.touches.length === 1 && scale > 1) {
-            // Pan start
-            const touch = e.touches[0];
-            setDragStart({ x: touch.clientX - position.x, y: touch.clientY - position.y });
+            touchStartRef.current = { distance, scale };
         }
     };
 
@@ -105,33 +82,23 @@ export function ProductCard({ product }: ProductCardProps) {
             );
             const initialDistance = touchStartRef.current.distance;
             if (initialDistance > 0) {
-                const newScale = Math.min(Math.max(1, scale * (distance / initialDistance)), 4);
+                const ratio = distance / initialDistance;
+                const newScale = Math.min(Math.max(1, touchStartRef.current.scale * ratio), 4);
                 setScale(newScale);
-                touchStartRef.current.distance = distance;
             }
-        } else if (e.touches.length === 1 && scale > 1) {
-            // Pan
-            e.preventDefault();
-            const touch = e.touches[0];
-            setPosition({
-                x: touch.clientX - dragStart.x,
-                y: touch.clientY - dragStart.y
-            });
         }
     };
 
     const handleDoubleClick = () => {
         if (scale > 1) {
             setScale(1);
-            setPosition({ x: 0, y: 0 });
         } else {
-            setScale(2);
+            setScale(2.5);
         }
     };
 
     const resetZoom = () => {
         setScale(1);
-        setPosition({ x: 0, y: 0 });
         setCurrentImageIndex(0);
     };
 
@@ -279,40 +246,42 @@ export function ProductCard({ product }: ProductCardProps) {
                             )}
                         </div>
 
-                        {/* Image Container */}
+                        {/* Image Container with Scroll */}
                         <motion.div
                             initial={{ scale: 0.8 }}
                             animate={{ scale: 1 }}
                             exit={{ scale: 0.8 }}
-                            className="relative max-w-4xl w-full"
+                            className="relative max-w-4xl w-full max-h-[85vh]"
                             onClick={(e) => e.stopPropagation()}
                             onWheel={handleWheel}
                         >
                             <div
-                                className={`relative overflow-hidden rounded-2xl ${scale > 1 ? 'cursor-grab active:cursor-grabbing' : 'cursor-zoom-in'}`}
-                                onMouseDown={handleMouseDown}
-                                onMouseMove={handleMouseMove}
-                                onMouseUp={handleMouseUp}
-                                onMouseLeave={handleMouseUp}
+                                ref={imageContainerRef}
+                                className={`modal-scroll relative overflow-auto rounded-2xl max-h-[85vh] ${scale > 1 ? 'cursor-grab active:cursor-grabbing' : 'cursor-zoom-in'}`}
                                 onTouchStart={handleTouchStart}
                                 onTouchMove={handleTouchMove}
                                 onDoubleClick={handleDoubleClick}
                                 style={{
-                                    touchAction: scale > 1 ? 'none' : 'auto'
+                                    touchAction: scale > 1 ? 'pan-x pan-y' : 'auto',
+                                    WebkitOverflowScrolling: 'touch',
+                                    scrollBehavior: 'smooth'
                                 }}
                             >
                                 <img
                                     src={product.images[currentImageIndex]}
                                     alt={product.name}
-                                    className="w-full h-auto max-h-[80vh] object-contain select-none"
+                                    className="select-none"
                                     style={{
-                                        transform: `scale(${scale}) translate(${position.x / scale}px, ${position.y / scale}px)`,
-                                        transition: isDragging ? 'none' : 'transform 0.1s ease-out',
-                                        transformOrigin: 'center center'
+                                        transform: `scale(${scale})`,
+                                        transition: 'transform 0.2s ease-out',
+                                        transformOrigin: 'center center',
+                                        minWidth: '100%',
+                                        minHeight: '100%',
+                                        objectFit: 'contain',
+                                        maxHeight: scale === 1 ? '80vh' : 'none'
                                     }}
                                     draggable={false}
                                 />
-
                             </div>
 
                             {/* Navigation Arrows */}
