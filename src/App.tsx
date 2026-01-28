@@ -24,6 +24,13 @@ export function App() {
             // Enable closing confirmation
             tg.enableClosingConfirmation();
 
+            // Set max width for the app
+            const rootElement = document.getElementById('root');
+            if (rootElement) {
+                rootElement.style.maxWidth = '1000px';
+                rootElement.style.margin = '0 auto';
+            }
+
             // Handle viewport changes for proper fullscreen
             const handleViewportChange = () => {
                 if (tg.viewportHeight) {
