@@ -55,6 +55,7 @@ export function ProductCard({ product }: ProductCardProps) {
 
     const handleMouseDown = (e: React.MouseEvent) => {
         if (scale > 1) {
+            e.preventDefault();
             setIsDragging(true);
             setDragStart({ x: e.clientX - position.x, y: e.clientY - position.y });
         }
@@ -62,6 +63,7 @@ export function ProductCard({ product }: ProductCardProps) {
 
     const handleMouseMove = (e: React.MouseEvent) => {
         if (isDragging && scale > 1) {
+            e.preventDefault();
             setPosition({
                 x: e.clientX - dragStart.x,
                 y: e.clientY - dragStart.y
@@ -73,6 +75,8 @@ export function ProductCard({ product }: ProductCardProps) {
         setIsDragging(false);
     };
 
+    const touchStartRef = React.useRef({ x: 0, y: 0, distance: 0 });
+
     const handleTouchStart = (e: React.TouchEvent) => {
         if (e.touches.length === 2) {
             // Pinch zoom start
@@ -82,8 +86,11 @@ export function ProductCard({ product }: ProductCardProps) {
                 touch2.clientX - touch1.clientX,
                 touch2.clientY - touch1.clientY
             );
-            (e.target as any).dataset.initialDistance = distance;
-            (e.target as any).dataset.initialScale = scale;
+            touchStartRef.current = { x: position.x, y: position.y, distance };
+        } else if (e.touches.length === 1 && scale > 1) {
+            // Pan start
+            const touch = e.touches[0];
+            setDragStart({ x: touch.clientX - position.x, y: touch.clientY - position.y });
         }
     };
 
@@ -96,10 +103,20 @@ export function ProductCard({ product }: ProductCardProps) {
                 touch2.clientX - touch1.clientX,
                 touch2.clientY - touch1.clientY
             );
-            const initialDistance = parseFloat((e.target as any).dataset.initialDistance || distance);
-            const initialScale = parseFloat((e.target as any).dataset.initialScale || 1);
-            const newScale = Math.min(Math.max(1, initialScale * (distance / initialDistance)), 4);
-            setScale(newScale);
+            const initialDistance = touchStartRef.current.distance;
+            if (initialDistance > 0) {
+                const newScale = Math.min(Math.max(1, scale * (distance / initialDistance)), 4);
+                setScale(newScale);
+                touchStartRef.current.distance = distance;
+            }
+        } else if (e.touches.length === 1 && scale > 1) {
+            // Pan
+            e.preventDefault();
+            const touch = e.touches[0];
+            setPosition({
+                x: touch.clientX - dragStart.x,
+                y: touch.clientY - dragStart.y
+            });
         }
     };
 
@@ -115,6 +132,7 @@ export function ProductCard({ product }: ProductCardProps) {
     const resetZoom = () => {
         setScale(1);
         setPosition({ x: 0, y: 0 });
+        setCurrentImageIndex(0);
     };
 
     return (
@@ -174,15 +192,24 @@ export function ProductCard({ product }: ProductCardProps) {
                 </div>
 
                 {/* Info */}
-                <div className="space-y-1">
-                    <div className="flex justify-between items-start">
-                        <h3 className="font-bold text-gray-900 text-lg leading-tight">
+                <div className="space-y-3">
+                    <div>
+                        <h3 className="font-bold text-gray-900 text-lg leading-tight mb-1">
                             {product.name}
                         </h3>
+                        <p className="text-xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-market-orange to-market-pink">
+                            {product.price.toLocaleString('uz-UZ')} so'm
+                        </p>
                     </div>
-                    <p className="text-xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-market-orange to-market-pink">
-                        {product.price.toLocaleString('uz-UZ')} so'm
-                    </p>
+
+                    {/* Add to Cart Button */}
+                    <button
+                        onClick={handleQuickAdd}
+                        className="w-full py-3 px-4 bg-gradient-to-r from-market-orange to-market-pink text-white font-bold rounded-xl hover:shadow-lg hover:scale-105 transition-all duration-200 flex items-center justify-center gap-2"
+                    >
+                        <ShoppingCart size={18} strokeWidth={2.5} />
+                        Savatchaga qo'shish
+                    </button>
                 </div>
             </motion.div>
 
@@ -257,12 +284,12 @@ export function ProductCard({ product }: ProductCardProps) {
                             initial={{ scale: 0.8 }}
                             animate={{ scale: 1 }}
                             exit={{ scale: 0.8 }}
-                            className="relative max-w-4xl w-full overflow-hidden"
+                            className="relative max-w-4xl w-full"
                             onClick={(e) => e.stopPropagation()}
                             onWheel={handleWheel}
                         >
-                            <div 
-                                className={`relative ${scale > 1 ? 'cursor-move' : 'cursor-zoom-in'}`}
+                            <div
+                                className={`relative overflow-hidden rounded-2xl ${scale > 1 ? 'cursor-grab active:cursor-grabbing' : 'cursor-zoom-in'}`}
                                 onMouseDown={handleMouseDown}
                                 onMouseMove={handleMouseMove}
                                 onMouseUp={handleMouseUp}
@@ -270,14 +297,18 @@ export function ProductCard({ product }: ProductCardProps) {
                                 onTouchStart={handleTouchStart}
                                 onTouchMove={handleTouchMove}
                                 onDoubleClick={handleDoubleClick}
+                                style={{
+                                    touchAction: scale > 1 ? 'none' : 'auto'
+                                }}
                             >
                                 <img
                                     src={product.images[currentImageIndex]}
                                     alt={product.name}
-                                    className="w-full h-auto max-h-[80vh] object-contain rounded-2xl select-none"
+                                    className="w-full h-auto max-h-[80vh] object-contain select-none"
                                     style={{
                                         transform: `scale(${scale}) translate(${position.x / scale}px, ${position.y / scale}px)`,
-                                        transition: isDragging ? 'none' : 'transform 0.2s ease-out'
+                                        transition: isDragging ? 'none' : 'transform 0.1s ease-out',
+                                        transformOrigin: 'center center'
                                     }}
                                     draggable={false}
                                 />
