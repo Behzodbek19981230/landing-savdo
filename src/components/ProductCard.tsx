@@ -54,8 +54,8 @@ export function ProductCard({ product }: ProductCardProps) {
                 }}>
 
                 {/* Image Container */}
-                <div className="relative aspect-[4/5] overflow-hidden rounded-2xl bg-gray-100 mb-4">
-                    <img onClick={handleImageClick}
+                <div className="relative aspect-[4/5] overflow-hidden rounded-2xl bg-gray-100 mb-4" onClick={handleImageClick}>
+                    <img
                         src={product.images[0]}
                         alt={product.name}
                         className="h-full w-full cursor-pointer object-cover object-center transition-transform duration-300 group-hover:scale-105"
