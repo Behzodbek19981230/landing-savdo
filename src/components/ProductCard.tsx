@@ -12,6 +12,10 @@ export function ProductCard({ product }: ProductCardProps) {
     const { addItem } = useCart();
     const [isImageOpen, setIsImageOpen] = useState(false);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const [scale, setScale] = useState(1);
+    const [position, setPosition] = useState({ x: 0, y: 0 });
+    const [isDragging, setIsDragging] = useState(false);
+    const [dragStart, setDragStart] = useState({ x: 0, y: 0 });
 
     const handleQuickAdd = (e: React.MouseEvent) => {
         e.preventDefault();
@@ -23,18 +27,94 @@ export function ProductCard({ product }: ProductCardProps) {
         e.preventDefault();
         e.stopPropagation();
         setIsImageOpen(true);
+        setScale(1);
+        setPosition({ x: 0, y: 0 });
     };
 
     const nextImage = () => {
         setCurrentImageIndex((prev) =>
             prev === product.images.length - 1 ? 0 : prev + 1
         );
+        setScale(1);
+        setPosition({ x: 0, y: 0 });
     };
 
     const prevImage = () => {
         setCurrentImageIndex((prev) =>
             prev === 0 ? product.images.length - 1 : prev - 1
         );
+        setScale(1);
+        setPosition({ x: 0, y: 0 });
+    };
+
+    const handleWheel = (e: React.WheelEvent) => {
+        e.preventDefault();
+        const delta = e.deltaY > 0 ? -0.1 : 0.1;
+        setScale((prev) => Math.min(Math.max(1, prev + delta), 4));
+    };
+
+    const handleMouseDown = (e: React.MouseEvent) => {
+        if (scale > 1) {
+            setIsDragging(true);
+            setDragStart({ x: e.clientX - position.x, y: e.clientY - position.y });
+        }
+    };
+
+    const handleMouseMove = (e: React.MouseEvent) => {
+        if (isDragging && scale > 1) {
+            setPosition({
+                x: e.clientX - dragStart.x,
+                y: e.clientY - dragStart.y
+            });
+        }
+    };
+
+    const handleMouseUp = () => {
+        setIsDragging(false);
+    };
+
+    const handleTouchStart = (e: React.TouchEvent) => {
+        if (e.touches.length === 2) {
+            // Pinch zoom start
+            const touch1 = e.touches[0];
+            const touch2 = e.touches[1];
+            const distance = Math.hypot(
+                touch2.clientX - touch1.clientX,
+                touch2.clientY - touch1.clientY
+            );
+            (e.target as any).dataset.initialDistance = distance;
+            (e.target as any).dataset.initialScale = scale;
+        }
+    };
+
+    const handleTouchMove = (e: React.TouchEvent) => {
+        if (e.touches.length === 2) {
+            e.preventDefault();
+            const touch1 = e.touches[0];
+            const touch2 = e.touches[1];
+            const distance = Math.hypot(
+                touch2.clientX - touch1.clientX,
+                touch2.clientY - touch1.clientY
+            );
+            const initialDistance = parseFloat((e.target as any).dataset.initialDistance || distance);
+            const initialScale = parseFloat((e.target as any).dataset.initialScale || 1);
+            const newScale = Math.min(Math.max(1, initialScale * (distance / initialDistance)), 4);
+            setScale(newScale);
+        }
+    };
+
+    const handleDoubleClick = () => {
+        if (scale > 1) {
+            setScale(1);
+            setPosition({ x: 0, y: 0 });
+        } else {
+            setScale(2);
+        }
+    };
+
+    const resetZoom = () => {
+        setScale(1);
+        setPosition({ x: 0, y: 0 });
     };
 
     return (
@@ -114,44 +194,116 @@ export function ProductCard({ product }: ProductCardProps) {
                         animate={{ opacity: 1 }}
                         exit={{ opacity: 0 }}
                         className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4"
-                        onClick={() => setIsImageOpen(false)}
+                        onClick={() => {
+                            setIsImageOpen(false);
+                            resetZoom();
+                        }}
                     >
                         {/* Close Button */}
                         <button
-                            onClick={() => setIsImageOpen(false)}
-                            className="absolute top-4 right-4 p-2 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors z-10"
+                            onClick={() => {
+                                setIsImageOpen(false);
+                                resetZoom();
+                            }}
+                            className="absolute top-4 right-4 p-2 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors z-20"
                         >
                             <X size={24} />
                         </button>
+
+                        {/* Zoom Controls */}
+                        <div className="absolute top-4 left-4 flex flex-col gap-2 z-20">
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setScale((prev) => Math.min(prev + 0.5, 4));
+                                }}
+                                className="p-2 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors backdrop-blur-sm"
+                            >
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                    <circle cx="11" cy="11" r="8"></circle>
+                                    <line x1="11" y1="8" x2="11" y2="14"></line>
+                                    <line x1="8" y1="11" x2="14" y2="11"></line>
+                                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                </svg>
+                            </button>
+                            <button
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setScale((prev) => Math.max(prev - 0.5, 1));
+                                }}
+                                className="p-2 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors backdrop-blur-sm"
+                            >
+                                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                                    <circle cx="11" cy="11" r="8"></circle>
+                                    <line x1="8" y1="11" x2="14" y2="11"></line>
+                                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                </svg>
+                            </button>
+                            {scale > 1 && (
+                                <button
+                                    onClick={(e) => {
+                                        e.stopPropagation();
+                                        resetZoom();
+                                    }}
+                                    className="p-2 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors backdrop-blur-sm text-xs font-bold"
+                                >
+                                    1:1
+                                </button>
+                            )}
+                        </div>
 
                         {/* Image Container */}
                         <motion.div
                             initial={{ scale: 0.8 }}
                             animate={{ scale: 1 }}
                             exit={{ scale: 0.8 }}
-                            className="relative max-w-4xl w-full"
+                            className="relative max-w-4xl w-full overflow-hidden"
                             onClick={(e) => e.stopPropagation()}
+                            onWheel={handleWheel}
                         >
-                            <img
-                                src={product.images[currentImageIndex]}
-                                alt={product.name}
-                                className="w-full h-auto max-h-[80vh] object-contain rounded-2xl"
-                            />
+                            <div 
+                                className={`relative ${scale > 1 ? 'cursor-move' : 'cursor-zoom-in'}`}
+                                onMouseDown={handleMouseDown}
+                                onMouseMove={handleMouseMove}
+                                onMouseUp={handleMouseUp}
+                                onMouseLeave={handleMouseUp}
+                                onTouchStart={handleTouchStart}
+                                onTouchMove={handleTouchMove}
+                                onDoubleClick={handleDoubleClick}
+                            >
+                                <img
+                                    src={product.images[currentImageIndex]}
+                                    alt={product.name}
+                                    className="w-full h-auto max-h-[80vh] object-contain rounded-2xl select-none"
+                                    style={{
+                                        transform: `scale(${scale}) translate(${position.x / scale}px, ${position.y / scale}px)`,
+                                        transition: isDragging ? 'none' : 'transform 0.2s ease-out'
+                                    }}
+                                    draggable={false}
+                                />
+
+                            </div>
 
                             {/* Navigation Arrows */}
                             {product.images.length > 1 && (
                                 <>
                                     <button
-                                        onClick={prevImage}
-                                        className="absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-white/20 hover:bg-white/30 rounded-full text-white transition-colors backdrop-blur-sm"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            prevImage();
+                                        }}
+                                        className="absolute left-4 top-1/2 -translate-y-1/2 p-3 bg-white/20 hover:bg-white/30 rounded-full text-white transition-colors backdrop-blur-sm z-10"
                                     >
                                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                             <polyline points="15 18 9 12 15 6"></polyline>
                                         </svg>
                                     </button>
                                     <button
-                                        onClick={nextImage}
-                                        className="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-white/20 hover:bg-white/30 rounded-full text-white transition-colors backdrop-blur-sm"
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            nextImage();
+                                        }}
+                                        className="absolute right-4 top-1/2 -translate-y-1/2 p-3 bg-white/20 hover:bg-white/30 rounded-full text-white transition-colors backdrop-blur-sm z-10"
                                     >
                                         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                                             <polyline points="9 18 15 12 9 6"></polyline>
@@ -159,10 +311,17 @@ export function ProductCard({ product }: ProductCardProps) {
                                     </button>
 
                                     {/* Image Counter */}
-                                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-4 py-2 bg-black/50 backdrop-blur-sm rounded-full text-white text-sm">
+                                    <div className="absolute bottom-20 left-1/2 -translate-x-1/2 px-4 py-2 bg-black/50 backdrop-blur-sm rounded-full text-white text-sm z-10">
                                         {currentImageIndex + 1} / {product.images.length}
                                     </div>
                                 </>
+                            )}
+
+                            {/* Zoom Indicator */}
+                            {scale > 1 && (
+                                <div className="absolute top-4 right-20 px-3 py-2 bg-black/50 backdrop-blur-sm rounded-full text-white text-sm z-10">
+                                    {Math.round(scale * 100)}%
+                                </div>
                             )}
 
                             {/* Product Info */}
