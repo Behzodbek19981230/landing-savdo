@@ -1,19 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { ShoppingBag, Search } from 'lucide-react';
-import { products } from '../data/products';
+import { ShoppingBag, Loader2 } from 'lucide-react';
 import { CategoryTabs } from '../components/CategoryTabs';
 import { ProductCard } from '../components/ProductCard';
 import { Cart } from '../components/Cart';
 import { useCart } from '../hooks/useCart';
-import { Category } from '../types';
+import { useCategories } from '../hooks/useCategories';
+import { useProducts } from '../hooks/useProducts';
+import { mapApiProductsToProducts } from '../utils/productMapper';
+
 export function ShopPage() {
-    const [selectedCategory, setSelectedCategory] = useState<Category>('Barchasi');
+    const [selectedCategoryId, setSelectedCategoryId] = useState<number | undefined>(undefined);
     const { totalItems, setIsOpen } = useCart();
-    const filteredProducts =
-        selectedCategory === 'Barchasi' ?
-            products :
-            products.filter((p) => p.category === selectedCategory);
+    
+    // Fetch categories and products
+    const { data: categoriesData, isLoading: categoriesLoading } = useCategories();
+    const { data: productsData, isLoading: productsLoading } = useProducts(selectedCategoryId);
+    
+    const categories = categoriesData?.results || [];
+    
+    // Map API products to local Product format
+    const products = useMemo(() => {
+        if (!productsData?.results) return [];
+        return mapApiProductsToProducts(productsData.results);
+    }, [productsData]);
+    
+    const isLoading = categoriesLoading || productsLoading;
     return (
         <div className="min-h-screen pb-20">
             {/* Header */}
@@ -65,50 +77,61 @@ export function ShopPage() {
                 </div> */}
 
                 {/* Categories */}
-                <div className="mb-10 flex justify-center">
-                    <CategoryTabs
-                        selected={selectedCategory}
-                        onSelect={setSelectedCategory} />
+                {!categoriesLoading && (
+                    <div className="mb-10 flex justify-center">
+                        <CategoryTabs
+                            categories={categories}
+                            selectedId={selectedCategoryId}
+                            onSelect={setSelectedCategoryId}
+                        />
+                    </div>
+                )}
 
-                </div>
+                {/* Loading State */}
+                {isLoading && (
+                    <div className="flex justify-center items-center py-20">
+                        <Loader2 className="w-12 h-12 animate-spin text-market-orange" />
+                    </div>
+                )}
 
                 {/* Grid */}
-                <motion.div
-                    layout
-                    className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                {!isLoading && (
+                    <motion.div
+                        layout
+                        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                        {products.map((product) => (
+                            <motion.div
+                                key={product.id}
+                                layout
+                                initial={{
+                                    opacity: 0,
+                                    scale: 0.9
+                                }}
+                                animate={{
+                                    opacity: 1,
+                                    scale: 1
+                                }}
+                                exit={{
+                                    opacity: 0,
+                                    scale: 0.9
+                                }}
+                                transition={{
+                                    duration: 0.3
+                                }}>
+                                <ProductCard product={product} />
+                            </motion.div>
+                        ))}
+                    </motion.div>
+                )}
 
-                    {filteredProducts.map((product) =>
-                        <motion.div
-                            key={product.id}
-                            layout
-                            initial={{
-                                opacity: 0,
-                                scale: 0.9
-                            }}
-                            animate={{
-                                opacity: 1,
-                                scale: 1
-                            }}
-                            exit={{
-                                opacity: 0,
-                                scale: 0.9
-                            }}
-                            transition={{
-                                duration: 0.3
-                            }}>
-
-                            <ProductCard product={product} />
-                        </motion.div>
-                    )}
-                </motion.div>
-
-                {filteredProducts.length === 0 &&
+                {/* Empty State */}
+                {!isLoading && products.length === 0 && (
                     <div className="text-center py-20">
                         <p className="text-xl text-gray-500">
                             Bu kategoriyada mahsulot topilmadi.
                         </p>
                     </div>
-                }
+                )}
             </main>
 
             <Cart />

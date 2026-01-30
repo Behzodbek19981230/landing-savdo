@@ -1,13 +1,17 @@
 export interface Product {
-  id: string;
+  id: number;
   name: string;
   price: number;
-  category: 'Barchasi' | 'Kosalar' | 'Likopchalar' | 'Tarelkalar' | 'Choyniklar' | 'Karafkalar';
+  category_id?: number;
+  category_name?: string;
   description: string;
   images: string[];
-  colors: string[];
+  colors?: string[];
   sizes?: string[];
-  rating: number;
+  rating?: number;
+  count?: number;
+  model?: string;
+  model_type?: string;
 }
 
 export interface CartItem extends Product {
@@ -15,8 +19,6 @@ export interface CartItem extends Product {
   selectedColor?: string;
   selectedSize?: string;
 }
-
-export type Category = 'Barchasi' | 'Kosalar' | 'Likopchalar' | 'Tarelkalar' | 'Choyniklar' | 'Karafkalar';
 
 // Telegram Web App Types
 declare global {
