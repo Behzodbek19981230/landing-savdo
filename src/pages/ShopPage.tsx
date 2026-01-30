@@ -11,6 +11,7 @@ import { mapApiProductsToProducts } from '../utils/productMapper';
 
 export function ShopPage() {
     const [selectedCategoryId, setSelectedCategoryId] = useState<number | undefined>(undefined);
+    const [openDescriptionId, setOpenDescriptionId] = useState<number | null>(null);
     const { totalItems, setIsOpen } = useCart();
     
     // Fetch categories and products
@@ -26,6 +27,11 @@ export function ShopPage() {
     }, [productsData]);
     
     const isLoading = categoriesLoading || productsLoading;
+    
+    // Handle description toggle - close others when one opens
+    const handleDescriptionToggle = (productId: number) => {
+        setOpenDescriptionId(prev => prev === productId ? null : productId);
+    };
     return (
         <div className="min-h-screen pb-20">
             {/* Header */}
@@ -78,8 +84,8 @@ export function ShopPage() {
 
                 {/* Categories */}
                 {!categoriesLoading && (
-                    <div className="mb-10 flex justify-center">
-                        <CategoryTabs
+                <div className="mb-10 flex justify-center">
+                    <CategoryTabs
                             categories={categories}
                             selectedId={selectedCategoryId}
                             onSelect={setSelectedCategoryId}
@@ -91,38 +97,42 @@ export function ShopPage() {
                 {isLoading && (
                     <div className="flex justify-center items-center py-20">
                         <Loader2 className="w-12 h-12 animate-spin text-market-orange" />
-                    </div>
+                </div>
                 )}
 
                 {/* Grid */}
                 {!isLoading && (
-                    <motion.div
-                        layout
-                        className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                <motion.div
+                    layout
+                    className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
                         {products.map((product) => (
-                            <motion.div
-                                key={product.id}
-                                layout
-                                initial={{
-                                    opacity: 0,
-                                    scale: 0.9
-                                }}
-                                animate={{
-                                    opacity: 1,
-                                    scale: 1
-                                }}
-                                exit={{
-                                    opacity: 0,
-                                    scale: 0.9
-                                }}
-                                transition={{
-                                    duration: 0.3
-                                }}>
-                                <ProductCard product={product} />
+                        <motion.div
+                            key={product.id}
+                            layout
+                            initial={{
+                                opacity: 0,
+                                scale: 0.9
+                            }}
+                            animate={{
+                                opacity: 1,
+                                scale: 1
+                            }}
+                            exit={{
+                                opacity: 0,
+                                scale: 0.9
+                            }}
+                            transition={{
+                                duration: 0.3
+                            }}>
+                                <ProductCard 
+                                    product={product}
+                                    isDescriptionOpen={openDescriptionId === product.id}
+                                    onDescriptionToggle={() => handleDescriptionToggle(product.id)}
+                                />
                             </motion.div>
                         ))}
-                    </motion.div>
-                )}
+                        </motion.div>
+                    )}
 
                 {/* Empty State */}
                 {!isLoading && products.length === 0 && (
