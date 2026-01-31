@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Plus, Eye, X, ShoppingCart, ZoomIn, ZoomOut, RotateCcw } from 'lucide-react';
+import { X, ZoomIn, ZoomOut, RotateCcw, ChevronDown, Share2, Download } from 'lucide-react';
 import { TransformWrapper, TransformComponent } from 'react-zoom-pan-pinch';
 import { Product } from '../types';
-import { useCart } from '../hooks/useCart';
 
 interface ProductCardProps {
     product: Product;
@@ -12,15 +11,8 @@ interface ProductCardProps {
 }
 
 export function ProductCard({ product, isDescriptionOpen = false, onDescriptionToggle }: ProductCardProps) {
-    const { addItem } = useCart();
     const [isImageOpen, setIsImageOpen] = useState(false);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
-
-    const handleQuickAdd = (e: React.MouseEvent) => {
-        e.preventDefault();
-        e.stopPropagation();
-        addItem(product);
-    };
 
     const handleImageClick = (e: React.MouseEvent) => {
         e.preventDefault();
@@ -41,12 +33,78 @@ export function ProductCard({ product, isDescriptionOpen = false, onDescriptionT
         setCurrentImageIndex(0);
     };
 
+    const handleShareToTelegram = (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const imageUrl = product.images[currentImageIndex];
+        const productName = product.model || product.name;
+        
+        // Telegram share link yaratish
+        const telegramShareUrl = `https://t.me/share/url?url=${encodeURIComponent(imageUrl)}&text=${encodeURIComponent(productName)}`;
+        
+        // Telegram Web App orqali share sahifasini ochish
+        if (window.Telegram?.WebApp) {
+            if (window.Telegram.WebApp.openTelegramLink) {
+                // Telegram'ning o'z share funksiyasini ishlatish
+                window.Telegram.WebApp.openTelegramLink(telegramShareUrl);
+            } else if (window.Telegram.WebApp.openLink) {
+                // openLink orqali ochish
+                window.Telegram.WebApp.openLink(telegramShareUrl);
+            } else {
+                // Fallback: oddiy link ochish
+                window.open(telegramShareUrl, '_blank');
+            }
+        } else {
+            // Agar Telegram Web App mavjud bo'lmasa, oddiy link ochish
+            window.open(telegramShareUrl, '_blank');
+        }
+    };
+
+    const handleDownloadImage = async (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation();
+        
+        const imageUrl = product.images[currentImageIndex];
+        const productName = product.model || product.name;
+        
+        try {
+            // Rasmni fetch qilib, blob formatida olish
+            const response = await fetch(imageUrl);
+            const blob = await response.blob();
+            
+            // Blob'ni URL'ga o'tkazish
+            const blobUrl = window.URL.createObjectURL(blob);
+            
+            // Download link yaratish
+            const link = document.createElement('a');
+            link.href = blobUrl;
+            link.download = `${productName}_${currentImageIndex + 1}.jpg`;
+            document.body.appendChild(link);
+            link.click();
+            
+            // Tozalash
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(blobUrl);
+        } catch (error) {
+            console.error('Rasmni yuklab olishda xatolik:', error);
+            // Fallback: to'g'ridan-to'g'ri link orqali yuklab olish
+            const link = document.createElement('a');
+            link.href = imageUrl;
+            link.download = `${productName}_${currentImageIndex + 1}.jpg`;
+            link.target = '_blank';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+    };
+
     return (
         <>
             <motion.div
-                className='group relative h-full bg-white rounded-3xl p-4 shadow-market transition-all duration-300 hover:shadow-market-hover'
+                className='group relative h-full bg-white rounded-2xl p-3 shadow-market transition-all duration-300 hover:shadow-market-hover'
                 whileHover={{
-                    y: -8,
+                    y: -4,
                 }}
                 initial={{
                     opacity: 0,
@@ -59,7 +117,7 @@ export function ProductCard({ product, isDescriptionOpen = false, onDescriptionT
             >
                 {/* Image Container */}
                 <div
-                    className='relative aspect-[4/5] overflow-hidden rounded-2xl bg-gray-100 mb-4'
+                    className='relative aspect-[4/5] overflow-hidden rounded-xl bg-gray-100 mb-3'
                     onClick={handleImageClick}
                 >
                     <img
@@ -71,109 +129,75 @@ export function ProductCard({ product, isDescriptionOpen = false, onDescriptionT
                     {/* Gradient Overlay on Hover */}
                     <div className='absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300' />
 
-                    {/* Action Buttons - Show on Hover */}
-                    {/* <div className="absolute inset-0 flex items-center justify-center gap-3 opacity-0 group-hover:opacity-100 transition-all duration-300">
-                        <motion.button
-                            onClick={handleImageClick}
-                            className="p-3 bg-white text-gray-900 rounded-full shadow-lg hover:bg-gray-100 transition-colors"
-                            whileTap={{ scale: 0.9 }}
-                            initial={{ y: 20 }}
-                            whileHover={{ y: 0 }}
-                        >
-                            <Eye size={20} strokeWidth={2.5} />
-                        </motion.button>
-
-                        <motion.button
-                            onClick={handleQuickAdd}
-                            className="p-3 bg-market-pink text-white rounded-full shadow-lg hover:bg-market-orange transition-colors"
-                            whileTap={{ scale: 0.9 }}
-                            initial={{ y: 20 }}
-                            whileHover={{ y: 0 }}
-                        >
-                            <ShoppingCart size={20} strokeWidth={2.5} />
-                        </motion.button>
-                    </div> */}
-
                     {/* Category Tag */}
                     {product.category_name && (
-                        <span className='absolute top-3 left-3 px-3 py-1 bg-white/90 backdrop-blur-sm text-xs font-bold text-gray-900 rounded-full'>
+                        <span className='absolute top-2 left-2 px-2 py-0.5 bg-white/90 backdrop-blur-sm text-xs font-bold text-gray-900 rounded-full'>
                             {product.category_name}
                         </span>
                     )}
 
                     {/* Stock Badge */}
                     {product.count !== undefined && product.count < 10 && product.count > 0 && (
-                        <span className='absolute top-3 right-3 px-3 py-1 bg-red-500/90 backdrop-blur-sm text-xs font-bold text-white rounded-full'>
-                            {product.count} ta qoldi
+                        <span className='absolute top-2 right-2 px-2 py-0.5 bg-red-500/90 backdrop-blur-sm text-xs font-bold text-white rounded-full'>
+                            {product.count} ta
                         </span>
                     )}
                 </div>
 
                 {/* Info */}
-                <div className='space-y-3'>
+                <div className='space-y-2'>
                     <div>
-                        <h3 className='font-bold text-gray-900 text-xl leading-tight mb-2'>{product.name}</h3>
+                        <h3 className='font-bold text-gray-900 text-base leading-tight mb-2 line-clamp-2'>{product.model}</h3>
 
-                        {/* Price */}
-                        {/* <div className='mb-3'>
-                            <p className='text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-market-orange to-market-pink'>
-                                {product.price.toLocaleString('uz-UZ')} so'm
-                            </p>
-                        </div> */}
+                        {/* Product Details - Compact Horizontal Layout */}
+                        <div className='text-xs text-gray-600 space-y-1 bg-gray-50 rounded-lg p-2'>
+                            <div className='flex flex-wrap items-center gap-x-3 gap-y-1'>
+                                {product.model_type && (
+                                    <div className='flex items-center gap-1.5'>
+                                        <span className='font-medium text-gray-700 text-xs'>Turi:</span>
+                                        <span className='text-gray-900 text-xs'>{product.model_type}</span>
+                                    </div>
+                                )}
 
-                        {/* Product Details */}
-                        <div className='text-sm text-gray-600 space-y-1.5 bg-gray-50 rounded-xl p-3'>
-                            {product.model && (
-                                <div className='flex items-center gap-2'>
-                                    <span className='text-gray-400'>📦</span>
-                                    <span className='font-medium text-gray-700'>Model:</span>
-                                    <span className='text-gray-900'>{product.model}</span>
-                                </div>
-                            )}
+                                {product.sizes && product.sizes.length > 0 && (
+                                    <div className='flex items-center gap-1.5'>
+                                        <span className='font-medium text-gray-700 text-xs'>O'lcham:</span>
+                                        <span className='text-gray-900 text-xs'>{product.sizes.join(', ')}</span>
+                                    </div>
+                                )}
 
-                            {product.model_type && (
-                                <div className='flex items-center gap-2'>
-                                    <span className='text-gray-400'>🏷️</span>
-                                    <span className='font-medium text-gray-700'>Turi:</span>
-                                    <span className='text-gray-900'>{product.model_type}</span>
-                                </div>
-                            )}
-
-                            {product.sizes && product.sizes.length > 0 && (
-                                <div className='flex items-center gap-2'>
-                                    <span className='text-gray-400'>📏</span>
-                                    <span className='font-medium text-gray-700'>O'lchami:</span>
-                                    <span className='text-gray-900'>{product.sizes.join(', ')}</span>
-                                </div>
-                            )}
-
-                            {product.count !== undefined && (
-                                <div className='flex items-center gap-2'>
-                                    <span className='text-gray-400'>📊</span>
-                                    <span className='font-medium text-gray-700'>Omborda:</span>
-                                    <span className={`font-semibold ${product.count < 10 ? 'text-red-600' : 'text-green-600'}`}>
-                                        {product.count} dona
-                                    </span>
-                                </div>
-                            )}
+                                {product.count !== undefined && (
+                                    <div className='flex items-center gap-1.5'>
+                                        <span className='font-medium text-gray-700 text-xs'>Qoldi:</span>
+                                        <span className={`font-semibold text-xs ${product.count < 10 ? 'text-red-600' : 'text-green-600'}`}>
+                                            {product.count}
+                                        </span>
+                                    </div>
+                                )}
+                            </div>
                         </div>
                     </div>
 
-                    {/* Description Toggle */}
+                    {/* Batafsil Button */}
                     {product.description && (
-                        <div>
+                        <>
                             <button
                                 onClick={(e) => {
                                     e.preventDefault();
                                     e.stopPropagation();
                                     onDescriptionToggle?.();
                                 }}
-                                className='flex items-center gap-2 text-market-orange font-semibold hover:text-market-pink transition-colors'
+                                className='w-full flex items-center justify-center gap-2 py-2 px-3 bg-gradient-to-r from-market-orange to-market-pink text-white text-sm font-semibold rounded-lg hover:shadow-lg hover:scale-[1.02] active:scale-95 transition-all duration-200'
                             >
-                                <span>{isDescriptionOpen ? '▼' : '▶'}</span>
-                                <span>Ma'lumot</span>
+                                <span>Batafsil</span>
+                                <ChevronDown 
+                                    size={14} 
+                                    strokeWidth={2.5}
+                                    className={`transition-transform duration-300 ${isDescriptionOpen ? 'rotate-180' : ''}`}
+                                />
                             </button>
 
+                            {/* Description */}
                             <AnimatePresence>
                                 {isDescriptionOpen && (
                                     <motion.div
@@ -183,23 +207,14 @@ export function ProductCard({ product, isDescriptionOpen = false, onDescriptionT
                                         transition={{ duration: 0.3 }}
                                         className='overflow-hidden'
                                     >
-                                        <div className='mt-2 p-3 bg-blue-50 rounded-xl text-sm text-gray-700 leading-relaxed'>
+                                        <div className='mt-2 p-3 bg-blue-50 rounded-lg text-sm text-gray-700 leading-relaxed'>
                                             {product.description}
                                         </div>
                                     </motion.div>
                                 )}
                             </AnimatePresence>
-                        </div>
+                        </>
                     )}
-
-                    {/* Add to Cart Button */}
-                    {/* <button
-                        onClick={handleQuickAdd}
-                        className='w-full py-3 px-4 bg-gradient-to-r from-market-orange to-market-pink text-white font-bold rounded-xl hover:shadow-lg hover:scale-[1.02] active:scale-95 transition-all duration-200 flex items-center justify-center gap-2'
-                    >
-                        <ShoppingCart size={18} strokeWidth={2.5} />
-                        Savatchaga qo'shish
-                    </button> */}
                 </div>
             </motion.div>
 
@@ -277,6 +292,24 @@ export function ProductCard({ product, isDescriptionOpen = false, onDescriptionT
                                                         <RotateCcw size={20} />
                                                     </button>
                                                 )}
+                                            </div>
+
+                                            {/* Share and Download Buttons */}
+                                            <div className='absolute top-4 right-16 flex items-center gap-2 z-20'>
+                                                <button
+                                                    onClick={handleDownloadImage}
+                                                    className='p-3 bg-green-500/90 hover:bg-green-600 rounded-full text-white transition-colors backdrop-blur-sm shadow-lg'
+                                                    title='Yuklab olish'
+                                                >
+                                                    <Download size={20} />
+                                                </button>
+                                                <button
+                                                    onClick={handleShareToTelegram}
+                                                    className='p-3 bg-blue-500/90 hover:bg-blue-600 rounded-full text-white transition-colors backdrop-blur-sm shadow-lg'
+                                                    title='Telegramga yuborish'
+                                                >
+                                                    <Share2 size={20} />
+                                                </button>
                                             </div>
 
                                             {/* Zoom Indicator */}
