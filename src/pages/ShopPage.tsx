@@ -7,70 +7,70 @@ import { Cart } from '../components/Cart';
 import { useCart } from '../hooks/useCart';
 import { useCategories } from '../hooks/useCategories';
 import { useProducts } from '../hooks/useProducts';
-import { mapApiProductsToProducts } from '../utils/productMapper';
 
 export function ShopPage() {
-    const [selectedCategoryId, setSelectedCategoryId] = useState<number | undefined>(undefined);
-    const [openDescriptionId, setOpenDescriptionId] = useState<number | null>(null);
-    const { totalItems, setIsOpen } = useCart();
-    
-    // Fetch categories and products
-    const { data: categoriesData, isLoading: categoriesLoading } = useCategories();
-    const { data: productsData, isLoading: productsLoading } = useProducts(selectedCategoryId);
-    
-    const categories = categoriesData?.results || [];
-    
-    // Map API products to local Product format
-    const products = useMemo(() => {
-        if (!productsData?.results) return [];
-        return mapApiProductsToProducts(productsData.results);
-    }, [productsData]);
-    
-    const isLoading = categoriesLoading || productsLoading;
-    
-    // Handle description toggle - close others when one opens
-    const handleDescriptionToggle = (productId: number) => {
-        setOpenDescriptionId(prev => prev === productId ? null : productId);
-    };
-    return (
-        <div className="min-h-screen pb-20">
-            {/* Header */}
-            <header className="sticky top-0 z-30 bg-market-bg/80 backdrop-blur-md border-b border-blue-100">
-                <div className=" mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                        <div className="w-10 h-10 bg-gradient-to-tr from-market-orange to-market-pink rounded-xl flex items-center justify-center text-white shadow-lg shadow-market-orange/30">
-                            <ShoppingBag size={20} strokeWidth={3} />
-                        </div>
-                        <h1 className="text-2xl font-extrabold tracking-tight">
-                            <span className="text-gray-900">Elegant</span>
-                            <span className="text-transparent bg-clip-text bg-gradient-to-r from-market-orange to-market-pink">
-                                Chinni
-                            </span>
-                        </h1>
-                    </div>
+	const [selectedCategoryId, setSelectedCategoryId] = useState<number | undefined>(undefined);
+	const [openDescriptionId, setOpenDescriptionId] = useState<number | null>(null);
+	const { totalItems, setIsOpen } = useCart();
 
-                    <div className="flex items-center gap-4">
-                        <button
-                            onClick={() => setIsOpen(true)}
-                            className="relative p-3 bg-white rounded-full shadow-md hover:shadow-lg transition-all hover:scale-105 group">
+	// Fetch categories and products
+	const { data: categoriesData, isLoading: categoriesLoading } = useCategories();
+	const { data: productsData, isLoading: productsLoading } = useProducts(selectedCategoryId);
 
-                            <ShoppingBag
-                                size={24}
-                                className="text-gray-700 group-hover:text-market-orange transition-colors" />
+	const categories = categoriesData?.results || [];
 
-                            {totalItems > 0 &&
-                                <span className="absolute -top-1 -right-1 w-6 h-6 bg-market-pink text-white text-xs font-bold flex items-center justify-center rounded-full border-2 border-white">
-                                    {totalItems}
-                                </span>
-                            }
-                        </button>
-                    </div>
-                </div>
-            </header>
+	// Map API products to local Product format
+	const products = useMemo(() => {
+		if (!productsData?.results) return [];
+		return productsData.results;
+	}, [productsData]);
 
-            <main className=" mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                {/* Hero / Welcome */}
-                {/* <div className="mb-12 text-center max-w-2xl mx-auto">
+	const isLoading = categoriesLoading || productsLoading;
+
+	// Handle description toggle - close others when one opens
+	const handleDescriptionToggle = (productId: number) => {
+		setOpenDescriptionId((prev) => (prev === productId ? null : productId));
+	};
+	return (
+		<div className='min-h-screen pb-20'>
+			{/* Header */}
+			<header className='sticky top-0 z-30 bg-market-bg/80 backdrop-blur-md border-b border-blue-100'>
+				<div className=' mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between'>
+					<div className='flex items-center gap-2'>
+						<div className='w-10 h-10 bg-gradient-to-tr from-market-orange to-market-pink rounded-xl flex items-center justify-center text-white shadow-lg shadow-market-orange/30'>
+							<ShoppingBag size={20} strokeWidth={3} />
+						</div>
+						<h1 className='text-2xl font-extrabold tracking-tight'>
+							<span className='text-gray-900'>Elegant</span>
+							<span className='text-transparent bg-clip-text bg-gradient-to-r from-market-orange to-market-pink'>
+								Chinni
+							</span>
+						</h1>
+					</div>
+
+					<div className='flex items-center gap-4'>
+						<button
+							onClick={() => setIsOpen(true)}
+							className='relative p-3 bg-white rounded-full shadow-md hover:shadow-lg transition-all hover:scale-105 group'
+						>
+							<ShoppingBag
+								size={24}
+								className='text-gray-700 group-hover:text-market-orange transition-colors'
+							/>
+
+							{totalItems > 0 && (
+								<span className='absolute -top-1 -right-1 w-6 h-6 bg-market-pink text-white text-xs font-bold flex items-center justify-center rounded-full border-2 border-white'>
+									{totalItems}
+								</span>
+							)}
+						</button>
+					</div>
+				</div>
+			</header>
+
+			<main className=' mx-auto px-4 sm:px-6 lg:px-8 py-8'>
+				{/* Hero / Welcome */}
+				{/* <div className="mb-12 text-center max-w-2xl mx-auto">
                     <h2 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-4">
                         Zamonaviy Savdo, <br />
                         <span className="text-transparent bg-clip-text bg-gradient-to-r from-market-orange to-market-pink">
@@ -82,69 +82,66 @@ export function ShopPage() {
                     </p>
                 </div> */}
 
-                {/* Categories */}
-                {!categoriesLoading && (
-                <div className="mb-10 flex justify-center">
-                    <CategoryTabs
-                            categories={categories}
-                            selectedId={selectedCategoryId}
-                            onSelect={setSelectedCategoryId}
-                        />
-                    </div>
-                )}
+				{/* Categories */}
+				{!categoriesLoading && (
+					<div className='mb-10 flex justify-center'>
+						<CategoryTabs
+							categories={categories}
+							selectedId={selectedCategoryId}
+							onSelect={setSelectedCategoryId}
+						/>
+					</div>
+				)}
 
-                {/* Loading State */}
-                {isLoading && (
-                    <div className="flex justify-center items-center py-20">
-                        <Loader2 className="w-12 h-12 animate-spin text-market-orange" />
-                </div>
-                )}
+				{/* Loading State */}
+				{isLoading && (
+					<div className='flex justify-center items-center py-20'>
+						<Loader2 className='w-12 h-12 animate-spin text-market-orange' />
+					</div>
+				)}
 
-                {/* Grid */}
-                {!isLoading && (
-                <motion.div
-                    layout
-                    className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {products.map((product) => (
-                        <motion.div
-                            key={product.id}
-                            layout
-                            initial={{
-                                opacity: 0,
-                                scale: 0.9
-                            }}
-                            animate={{
-                                opacity: 1,
-                                scale: 1
-                            }}
-                            exit={{
-                                opacity: 0,
-                                scale: 0.9
-                            }}
-                            transition={{
-                                duration: 0.3
-                            }}>
-                                <ProductCard 
-                                    product={product}
-                                    isDescriptionOpen={openDescriptionId === product.id}
-                                    onDescriptionToggle={() => handleDescriptionToggle(product.id)}
-                                />
-                            </motion.div>
-                        ))}
-                        </motion.div>
-                    )}
+				{/* Grid */}
+				{!isLoading && (
+					<motion.div layout className='grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6'>
+						{products.map((product) => (
+							<motion.div
+								key={product.id}
+								layout
+								initial={{
+									opacity: 0,
+									scale: 0.9,
+								}}
+								animate={{
+									opacity: 1,
+									scale: 1,
+								}}
+								exit={{
+									opacity: 0,
+									scale: 0.9,
+								}}
+								transition={{
+									duration: 0.3,
+								}}
+							>
+								<ProductCard
+									product={product}
+									isDescriptionOpen={openDescriptionId === product.id}
+									onDescriptionToggle={() => handleDescriptionToggle(product.id)}
+								/>
+							</motion.div>
+						))}
+					</motion.div>
+				)}
 
-                {/* Empty State */}
-                {!isLoading && products.length === 0 && (
-                    <div className="text-center py-20">
-                        <p className="text-xl text-gray-500">
-                            Bu kategoriyada mahsulot topilmadi.
-                        </p>
-                    </div>
-                )}
-            </main>
+				{/* Empty State */}
+				{!isLoading && products.length === 0 && (
+					<div className='text-center py-20'>
+						<p className='text-xl text-gray-500'>Bu kategoriyada mahsulot topilmadi.</p>
+					</div>
+				)}
+			</main>
 
-            <Cart />
-        </div>);
-
+			<Cart />
+		</div>
+	);
 }
