@@ -127,7 +127,7 @@ export function ProductCard({ product, isDescriptionOpen = false, onDescriptionT
 					onClick={handleImageClick}
 				>
 					<img
-						src={product?.images?.[0]?.file || '/placeholder-image.png'}
+						src={product?.images?.[currentImageIndex]?.file || '/placeholder-image.png'}
 						alt={product.model_detail?.name}
 						className='h-full w-full cursor-pointer object-cover object-center transition-transform duration-300 group-hover:scale-105'
 					/>
