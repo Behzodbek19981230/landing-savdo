@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { X, Minus, Plus, ShoppingBag, Trash2 } from 'lucide-react';
 import { useCart } from '../hooks/useCart';
 import { Button } from './ui/Button';
+import { getDefaultImage } from '../utils/defaultImage';
 export function Cart() {
     const { isOpen, setIsOpen, items, removeItem, updateQuantity, totalPrice } =
         useCart();
@@ -100,9 +101,16 @@ export function Cart() {
 
                                             <div className="w-24 h-24 rounded-xl overflow-hidden bg-gray-100 flex-shrink-0">
                                                 <img
-                                                    src={item.images[0]}
+                                                    src={item.images?.[0] || getDefaultImage()}
                                                     alt={item.name}
-                                                    className="w-full h-full object-cover" />
+                                                    className="w-full h-full object-cover"
+                                                    onError={(e) => {
+                                                        const target = e.target as HTMLImageElement;
+                                                        if (target.src !== getDefaultImage()) {
+                                                            target.src = getDefaultImage();
+                                                        }
+                                                    }}
+                                                />
 
                                             </div>
                                             <div className="flex-1 flex flex-col justify-between">

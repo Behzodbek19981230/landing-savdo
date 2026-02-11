@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
 import { productsApi } from '../api/services';
 
-export const useProducts = (categoryId?: number) => {
+export const useProducts = (categoryId?: number, page?: number, limit?: number, search?: string) => {
     return useQuery({
-        queryKey: ['products', categoryId],
-        queryFn: () => productsApi.getAll(categoryId),
+        queryKey: ['products', categoryId, page, limit, search],
+        queryFn: () => productsApi.getAll(categoryId, page, limit, search),
         staleTime: 5 * 60 * 1000, // 5 minutes
         gcTime: 10 * 60 * 1000, // 10 minutes
     });

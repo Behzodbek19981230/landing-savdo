@@ -11,8 +11,12 @@ export const categoriesApi = {
 
 // Products API
 export const productsApi = {
-	getAll: async (categoryId?: number): Promise<ApiResponse<ApiProduct>> => {
-		const params = categoryId ? { branch: categoryId } : {};
+	getAll: async (categoryId?: number, page?: number, limit?: number, search?: string): Promise<ApiResponse<ApiProduct>> => {
+		const params: Record<string, any> = {};
+		if (categoryId) params.branch = categoryId;
+		if (page) params.page = page;
+		if (limit) params.limit = limit;
+		if (search && search.trim()) params.search = search.trim();
 		const response = await apiClient.get<ApiResponse<ApiProduct>>('/product/public', { params });
 		return response.data;
 	},

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { getDefaultImage } from '../utils/defaultImage';
 interface ProductCarouselProps {
   images: string[];
   name: string;
@@ -19,7 +20,7 @@ export function ProductCarousel({ images, name }: ProductCarouselProps) {
         <AnimatePresence mode="wait">
           <motion.img
             key={currentIndex}
-            src={images[currentIndex]}
+            src={images[currentIndex] || getDefaultImage()}
             alt={`${name} view ${currentIndex + 1}`}
             className="w-full h-full object-cover"
             initial={{
@@ -46,6 +47,12 @@ export function ProductCarousel({ images, name }: ProductCarouselProps) {
               const swipe = offset.x;
               if (swipe < -50) nextImage();else
               if (swipe > 50) prevImage();
+            }}
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              if (target.src !== getDefaultImage()) {
+                target.src = getDefaultImage();
+              }
             }} />
 
         </AnimatePresence>
@@ -75,7 +82,17 @@ export function ProductCarousel({ images, name }: ProductCarouselProps) {
           onClick={() => setCurrentIndex(idx)}
           className={`relative flex-shrink-0 w-20 h-20 rounded-xl overflow-hidden transition-all ${idx === currentIndex ? 'ring-2 ring-market-pink ring-offset-2' : 'opacity-70 hover:opacity-100'}`}>
 
-            <img src={img} alt="" className="w-full h-full object-cover" />
+            <img 
+              src={img || getDefaultImage()} 
+              alt={`${name} thumbnail ${idx + 1}`} 
+              className="w-full h-full object-cover"
+              onError={(e) => {
+                const target = e.target as HTMLImageElement;
+                if (target.src !== getDefaultImage()) {
+                  target.src = getDefaultImage();
+                }
+              }}
+            />
           </button>
         )}
       </div>
