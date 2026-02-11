@@ -11,7 +11,12 @@ export const categoriesApi = {
 
 // Products API
 export const productsApi = {
-	getAll: async (categoryId?: number, page?: number, limit?: number, search?: string): Promise<ApiResponse<ApiProduct>> => {
+	getAll: async (
+		categoryId?: number,
+		page?: number,
+		limit?: number,
+		search?: string,
+	): Promise<ApiResponse<ApiProduct>> => {
 		const params: Record<string, any> = {};
 		if (categoryId) params.branch = categoryId;
 		if (page) params.page = page;
@@ -23,6 +28,11 @@ export const productsApi = {
 
 	getById: async (id: number): Promise<ApiProduct> => {
 		const response = await apiClient.get<ApiProduct>(`/product/public/${id}`);
+		return response.data;
+	},
+
+	getAttachments: async (productId: number): Promise<ApiResponse<any>> => {
+		const response = await apiClient.get<ApiResponse<any>>(`/product/public/${productId}/attachments`);
 		return response.data;
 	},
 };

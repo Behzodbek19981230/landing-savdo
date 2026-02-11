@@ -1,19 +1,19 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import { motion } from 'framer-motion';
 import { ShoppingBag, Loader2, Search, X } from 'lucide-react';
 import { CategoryTabs } from '../components/CategoryTabs';
 import { ProductCard } from '../components/ProductCard';
 import { Cart } from '../components/Cart';
-import { Pagination } from '../components/Pagination';
 import { useCart } from '../hooks/useCart';
 import { useCategories } from '../hooks/useCategories';
 import { useProducts } from '../hooks/useProducts';
+import { ApiProduct } from '../api/types';
 
 export function ShopPage() {
     const [selectedCategoryId, setSelectedCategoryId] = useState<number | undefined>(undefined);
     const [openDescriptionId, setOpenDescriptionId] = useState<number | null>(null);
     const [page, setPage] = useState(1);
-    const [limit] = useState(12); // Default limit
+    const [limit] = useState(20); // Default limit (changed to 20)
     const [searchQuery, setSearchQuery] = useState('');
     const [debouncedSearch, setDebouncedSearch] = useState('');
     const { totalItems, setIsOpen } = useCart();
@@ -27,39 +27,88 @@ export function ShopPage() {
         return () => clearTimeout(timer);
     }, [searchQuery]);
 
-    // Reset page to 1 when category or search changes
-    useEffect(() => {
-        setPage(1);
-    }, [selectedCategoryId, debouncedSearch]);
-
     // Fetch categories and products
     const { data: categoriesData, isLoading: categoriesLoading } = useCategories();
     const { data: productsData, isLoading: productsLoading } = useProducts(
         selectedCategoryId,
         page,
         limit,
-        debouncedSearch
+        debouncedSearch,
     );
 
     const categories = categoriesData?.results || [];
 
-    // Map API products to local Product format
-    const products = useMemo(() => {
-        if (!productsData?.results) return [];
-        return productsData.results;
-    }, [productsData]);
+    // Accumulate paginated results for infinite scroll
+    const pageResults = useMemo(() => productsData?.results || [], [productsData?.results]);
+    const [allProducts, setAllProducts] = useState<ApiProduct[]>([]);
+    const sentinelRef = useRef<HTMLDivElement | null>(null);
 
     const pagination = productsData?.pagination;
-    const totalPages = pagination?.lastPage || 1;
-    const currentPage = pagination?.currentPage || page;
-
     const isLoading = categoriesLoading || productsLoading;
 
-    // Handle page change
-    const handlePageChange = (newPage: number) => {
-        setPage(newPage);
+    // Reset page and products when category or search changes
+    useEffect(() => {
+        setPage(1);
+        setAllProducts([]);
+        // Scroll to top when category or search changes
         window.scrollTo({ top: 0, behavior: 'smooth' });
-    };
+    }, [selectedCategoryId, debouncedSearch]);
+
+    // Accumulate products when new page results arrive
+    useEffect(() => {
+        if (!pageResults || pageResults.length === 0) return;
+
+        if (page === 1) {
+            // First page - replace all products
+            setAllProducts(pageResults);
+        } else {
+            // Save scroll position before adding new products
+            const savedScrollY = window.scrollY;
+
+            // Subsequent pages - append new products (avoid duplicates)
+            setAllProducts((prev) => {
+                const existingIds = new Set(prev.map((p) => p.id));
+                const newProducts = pageResults.filter((p) => !existingIds.has(p.id));
+                return [...prev, ...newProducts];
+            });
+
+            // Restore scroll position after DOM updates
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    window.scrollTo({
+                        top: savedScrollY,
+                        behavior: 'auto',
+                    });
+                });
+            });
+        }
+    }, [pageResults, page]);
+
+    // IntersectionObserver to load next page when sentinel is visible
+    useEffect(() => {
+        const node = sentinelRef.current;
+        if (!node || isLoading) return;
+
+        const currentPageNum = pagination?.currentPage || page;
+        const lastPage = pagination?.lastPage || 1;
+
+        // Don't observe if we've reached the last page
+        if (currentPageNum >= lastPage) return;
+
+        const observer = new IntersectionObserver(
+            (entries) => {
+                entries.forEach((entry) => {
+                    if (entry.isIntersecting && !isLoading && currentPageNum < lastPage) {
+                        setPage((p) => p + 1);
+                    }
+                });
+            },
+            { root: null, rootMargin: '200px', threshold: 0.1 },
+        );
+
+        observer.observe(node);
+        return () => observer.disconnect();
+    }, [isLoading, pagination, page]);
 
     // Handle description toggle - close others when one opens
     const handleDescriptionToggle = (productId: number) => {
@@ -149,7 +198,7 @@ export function ShopPage() {
                 {!isLoading && (
                     <>
                         <motion.div layout className='grid grid-cols-1 sm:grid-cols-3 lg:grid-cols-4 gap-6'>
-                            {products.map((product) => (
+                            {allProducts.map((product) => (
                                 <motion.div
                                     key={product.id}
                                     layout
@@ -178,19 +227,18 @@ export function ShopPage() {
                             ))}
                         </motion.div>
 
-                        {/* Pagination */}
-                        {products.length > 0 && (
-                            <Pagination
-                                currentPage={currentPage}
-                                totalPages={totalPages}
-                                onPageChange={handlePageChange}
-                            />
+                        <div ref={sentinelRef} />
+
+                        {productsLoading && allProducts.length > 0 && (
+                            <div className='flex justify-center items-center py-6'>
+                                <Loader2 className='w-8 h-8 animate-spin text-market-orange' />
+                            </div>
                         )}
                     </>
                 )}
 
                 {/* Empty State */}
-                {!isLoading && products.length === 0 && (
+                {!isLoading && allProducts.length === 0 && (
                     <div className='text-center py-20'>
                         {searchQuery ? (
                             <>

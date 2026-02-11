@@ -8,7 +8,7 @@ export interface ApiPagination {
 
 export interface ApiResponse<T> {
 	pagination: ApiPagination;
-	results: T[];
+	results?: T[];
 	filters: any;
 }
 
@@ -147,5 +147,5 @@ export interface ApiProduct {
 	is_delete?: boolean;
 	created_at?: string;
 	updated_at?: string;
-	images?: ApiProductAttachment[];
+	images?: ApiProductAttachment;
 }
