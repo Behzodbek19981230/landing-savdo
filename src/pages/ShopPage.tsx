@@ -1,10 +1,9 @@
 import { useState, useEffect, useLayoutEffect, useRef, useMemo } from 'react';
 import { motion } from 'framer-motion';
-import { ShoppingBag, Loader2, Search, X, Filter, ChevronUp } from 'lucide-react';
+import { Loader2, Search, X, Filter, ChevronUp } from 'lucide-react';
 import { ProductCard } from '../components/ProductCard';
 import { FilterSelect } from '../components/FilterSelect';
 import { Cart } from '../components/Cart';
-import { useCart } from '../hooks/useCart';
 import { useBranchCategories } from '../hooks/useBranchCategories';
 import { useProductModels } from '../hooks/useProductModels';
 import { useProductTypes } from '../hooks/useProductTypes';
