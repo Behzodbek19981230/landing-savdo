@@ -168,7 +168,7 @@ export function ProductCard({ product, isDescriptionOpen = false, onDescriptionT
 				{/* Info */}
 				<div className='p-3 space-y-1'>
 					<div>
-						<h3 className='font-bold text-gray-900 text-smnpm run build leading-tight mb-1 line-clamp-2'>
+						<h3 className='font-bold text-gray-900 text-sm leading-tight mb-1 line-clamp-2'>
 							{product.model_detail?.name}
 						</h3>
 
@@ -179,6 +179,14 @@ export function ProductCard({ product, isDescriptionOpen = false, onDescriptionT
 									<span className='font-medium text-gray-700 text-xs'>Kodi:</span>
 									<span className='text-gray-900 text-xs'>{product.type_detail.name}</span>
 								</div>
+							</div>
+						)}
+						{product.size_detail && (
+							<div className='flex items-center gap-1'>
+								<span className='font-medium text-gray-800'>O'lcham:</span>
+								<span>
+									{product.size_detail.size} {product.size_detail?.unit_code}
+								</span>
 							</div>
 						)}
 					</div>
@@ -216,14 +224,6 @@ export function ProductCard({ product, isDescriptionOpen = false, onDescriptionT
 										className='overflow-hidden'
 									>
 										<div className='mt-1 pt-1 border-t border-gray-100 text-xs text-gray-700 leading-tight space-y-1'>
-											{product.size_detail && (
-												<div className='flex items-center gap-1'>
-													<span className='font-medium text-gray-800'>O'lcham:</span>
-													<span>
-														{product.size_detail.size} {product.size_detail?.unit_code}
-													</span>
-												</div>
-											)}
 											{product.note && <div className='text-gray-600'>{product.note}</div>}
 										</div>
 									</motion.div>
