@@ -120,7 +120,7 @@ export function ProductCard({ product, isDescriptionOpen = false, onDescriptionT
 	return (
 		<>
 			<motion.div
-				className='group relative h-full bg-white rounded-2xl p-3 shadow-market transition-all duration-300 hover:shadow-market-hover'
+				className='group relative h-full bg-white rounded-2xl overflow-hidden shadow-market transition-all duration-300 hover:shadow-market-hover'
 				whileHover={{
 					y: -4,
 				}}
@@ -133,11 +133,8 @@ export function ProductCard({ product, isDescriptionOpen = false, onDescriptionT
 					y: 0,
 				}}
 			>
-				{/* Image Container */}
-				<div
-					className='relative aspect-[4/5] overflow-hidden rounded-xl bg-gray-100 mb-3'
-					onClick={handleImageClick}
-				>
+				{/* Image: full-bleed, no padding */}
+				<div className='relative aspect-[4/5] overflow-hidden bg-gray-100' onClick={handleImageClick}>
 					<img
 						src={product?.images?.file || getDefaultImage()}
 						alt={product.model_detail?.name || 'Mahsulot rasmi'}
@@ -154,9 +151,9 @@ export function ProductCard({ product, isDescriptionOpen = false, onDescriptionT
 					<div className='absolute inset-0 bg-gradient-to-t from-black/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300' />
 
 					{/* Category Tag */}
-					{product.branch_detail && (
+					{product.branch_category_detail && (
 						<span className='absolute top-2 left-2 px-2 py-0.5 bg-white/90 backdrop-blur-sm text-xs font-bold text-gray-900 rounded-full'>
-							{product.branch_detail.name}
+							{product.branch_category_detail.name}
 						</span>
 					)}
 
@@ -169,65 +166,46 @@ export function ProductCard({ product, isDescriptionOpen = false, onDescriptionT
 				</div>
 
 				{/* Info */}
-				<div className='space-y-2'>
+				<div className='p-3 space-y-1'>
 					<div>
-						<h3 className='font-bold text-gray-900 text-base leading-tight mb-2 line-clamp-2'>
+						<h3 className='font-bold text-gray-900 text-smnpm run build leading-tight mb-1 line-clamp-2'>
 							{product.model_detail?.name}
 						</h3>
 
-						{/* Product Details - Compact Horizontal Layout */}
-						<div className='text-xs text-gray-600 space-y-1 bg-gray-50 rounded-lg p-2'>
-							<div className='flex flex-wrap items-center gap-x-3 gap-y-1'>
-								{product.type_detail && (
-									<div className='flex items-center gap-1.5'>
-										<span className='font-medium text-gray-700 text-xs'>Turi:</span>
-										<span className='text-gray-900 text-xs'>{product.type_detail.name}</span>
-									</div>
-								)}
-
-								{product.size_detail && (
-									<div className='flex items-center gap-1.5'>
-										<span className='font-medium text-gray-700 text-xs'>O'lcham:</span>
-										<span className='text-gray-900 text-xs'>
-											{product.size_detail.size} {product.size_detail?.unit_detail?.code}
-										</span>
-									</div>
-								)}
-
-								{product.count !== undefined && (
-									<div className='flex items-center gap-1.5'>
-										<span className='font-medium text-gray-700 text-xs'>Qoldi:</span>
-										<span
-											className={`font-semibold text-xs ${product.count < 10 ? 'text-red-600' : 'text-green-600'}`}
-										>
-											{product.count}
-										</span>
-									</div>
-								)}
+						{/* Product Details - faqat Kodi */}
+						{product.type_detail && (
+							<div className='text-xs text-gray-600 bg-gray-50 rounded-lg p-1.5'>
+								<div className='flex items-center gap-1.5'>
+									<span className='font-medium text-gray-700 text-xs'>Kodi:</span>
+									<span className='text-gray-900 text-xs'>{product.type_detail.name}</span>
+								</div>
 							</div>
-						</div>
+						)}
 					</div>
 
-					{/* Batafsil Button */}
-					{product.note && (
+					{/* Batafsil link — note yoki size bo'lsa ko'rinadi */}
+					{(product.note || product.size_detail) && (
 						<>
-							<button
-								onClick={(e) => {
-									e.preventDefault();
-									e.stopPropagation();
-									onDescriptionToggle?.();
-								}}
-								className='w-full flex items-center justify-center gap-2 py-2 px-3 bg-gradient-to-r from-market-orange to-market-pink text-white text-sm font-semibold rounded-lg hover:shadow-lg hover:scale-[1.02] active:scale-95 transition-all duration-200'
-							>
-								<span>Batafsil</span>
-								<ChevronDown
-									size={14}
-									strokeWidth={2.5}
-									className={`transition-transform duration-300 ${isDescriptionOpen ? 'rotate-180' : ''}`}
-								/>
-							</button>
+							<div className='flex justify-end'>
+								<button
+									type='button'
+									onClick={(e) => {
+										e.preventDefault();
+										e.stopPropagation();
+										onDescriptionToggle?.();
+									}}
+									className='inline-flex items-center gap-1 text-xs font-medium text-market-orange hover:text-market-pink transition-colors'
+								>
+									<span>Batafsil</span>
+									<ChevronDown
+										size={12}
+										strokeWidth={2.5}
+										className={`transition-transform duration-200 ${isDescriptionOpen ? 'rotate-180' : ''}`}
+									/>
+								</button>
+							</div>
 
-							{/* Description */}
+							{/* Batafsil ichida: o'lcham + tavsif */}
 							<AnimatePresence>
 								{isDescriptionOpen && (
 									<motion.div
@@ -237,8 +215,16 @@ export function ProductCard({ product, isDescriptionOpen = false, onDescriptionT
 										transition={{ duration: 0.3 }}
 										className='overflow-hidden'
 									>
-										<div className='mt-2 p-3 bg-blue-50 rounded-lg text-sm text-gray-700 leading-relaxed'>
-											{product.note}
+										<div className='mt-1.5 p-2.5 bg-blue-50 rounded-lg text-sm text-gray-700 leading-relaxed space-y-1.5'>
+											{product.size_detail && (
+												<div className='flex items-center gap-1.5'>
+													<span className='font-medium text-gray-700'>O'lcham:</span>
+													<span>
+														{product.size_detail.size} {product.size_detail?.unit_code}
+													</span>
+												</div>
+											)}
+											{product.note && <div>{product.note}</div>}
 										</div>
 									</motion.div>
 								)}

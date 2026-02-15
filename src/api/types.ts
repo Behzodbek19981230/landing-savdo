@@ -20,7 +20,73 @@ export interface ApiCategory {
 	is_delete: boolean;
 }
 
-// Product Types
+// Product branch category (kategoriya turi) - /product-branch-category/
+export interface ApiProductBranchCategoryDetail {
+	id: number;
+	name: string;
+	sorting: number;
+	is_delete: boolean;
+}
+
+export interface ApiProductBranchCategory {
+	id: number;
+	product_branch: number;
+	product_branch_detail: ApiProductBranchCategoryDetail;
+	name: string;
+	sorting: number;
+	is_delete: boolean;
+}
+
+// Product model - /product-model/public
+export interface ApiProductModelBranchCategoryDetail {
+	id: number;
+	product_branch: number;
+	name: string;
+	sorting: number;
+	is_delete: boolean;
+}
+
+export interface ApiProductModel {
+	id: number;
+	name: string;
+	branch_name: string;
+	branch_category: number;
+	branch_category_detail: ApiProductModelBranchCategoryDetail;
+	sorting: number;
+	is_delete: boolean;
+}
+
+// Product type - /product-type/public (filter by model: madel === selectedModelId)
+export interface ApiProductTypeBranchCategoryDetail {
+	id: number;
+	product_branch: number;
+	name: string;
+	sorting: number;
+	is_delete: boolean;
+}
+
+export interface ApiProductTypeModelDetail {
+	id: number;
+	name: string;
+	branch_name: string;
+	branch_category: number;
+	branch_category_detail: ApiProductTypeBranchCategoryDetail;
+	sorting: number;
+	is_delete: boolean;
+}
+
+export interface ApiProductType {
+	id: number;
+	name: string;
+	branch_name: string;
+	branch_category_name: string;
+	madel: number;
+	madel_detail: ApiProductTypeModelDetail;
+	sorting: number;
+	is_delete: boolean;
+}
+
+// Product Types (legacy)
 export interface ApiCategoryDetail {
 	id: number;
 	name: string;
@@ -93,6 +159,13 @@ export interface ApiProduct {
 		sorting?: number;
 		is_delete?: boolean;
 	};
+	branch_category: number;
+	branch_category_detail?: {
+		id: number;
+		name: string;
+		sorting?: number;
+		is_delete?: boolean;
+	};
 	model: number;
 	model_detail?: {
 		id: number;
@@ -127,6 +200,7 @@ export interface ApiProduct {
 			id: number;
 			name: string;
 		};
+		unit_code: string;
 		size: number;
 		type?: number | null;
 		type_detail?: unknown;
