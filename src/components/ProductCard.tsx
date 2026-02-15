@@ -168,7 +168,7 @@ export function ProductCard({ product, isDescriptionOpen = false, onDescriptionT
 				{/* Info */}
 				<div className='p-3 space-y-1'>
 					<div>
-						<h3 className='font-bold text-gray-900 text-sm leading-tight mb-1 line-clamp-2'>
+						<h3 className='font-bold text-gray-900 text-sm leading-tight mb-1 line-clamp-3'>
 							{product.model_detail?.name}
 						</h3>
 
@@ -182,11 +182,13 @@ export function ProductCard({ product, isDescriptionOpen = false, onDescriptionT
 							</div>
 						)}
 						{product.size_detail && (
-							<div className='flex items-center gap-1'>
-								<span className='font-medium text-gray-800'>O'lcham:</span>
-								<span>
-									{product.size_detail.size} {product.size_detail?.unit_code}
-								</span>
+							<div className='text-xs text-gray-600 bg-gray-50 rounded-lg p-1.5'>
+								<div className='flex items-center gap-1.5'>
+									<span className='font-medium text-gray-700 text-xs'>O'lcham:</span>
+									<span className='text-gray-900 text-xs'>
+										{product.size_detail.size} {product.size_detail?.unit_code}
+									</span>
+								</div>
 							</div>
 						)}
 					</div>
