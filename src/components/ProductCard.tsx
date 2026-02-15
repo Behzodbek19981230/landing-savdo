@@ -215,16 +215,16 @@ export function ProductCard({ product, isDescriptionOpen = false, onDescriptionT
 										transition={{ duration: 0.3 }}
 										className='overflow-hidden'
 									>
-										<div className='mt-1.5 p-2.5 bg-blue-50 rounded-lg text-sm text-gray-700 leading-relaxed space-y-1.5'>
+										<div className='mt-1 pt-1 border-t border-gray-100 text-xs text-gray-700 leading-tight space-y-1'>
 											{product.size_detail && (
-												<div className='flex items-center gap-1.5'>
-													<span className='font-medium text-gray-700'>O'lcham:</span>
+												<div className='flex items-center gap-1'>
+													<span className='font-medium text-gray-800'>O'lcham:</span>
 													<span>
 														{product.size_detail.size} {product.size_detail?.unit_code}
 													</span>
 												</div>
 											)}
-											{product.note && <div>{product.note}</div>}
+											{product.note && <div className='text-gray-600'>{product.note}</div>}
 										</div>
 									</motion.div>
 								)}

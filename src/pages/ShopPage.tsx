@@ -209,14 +209,12 @@ export function ShopPage() {
 			<main className='mx-auto px-4 sm:px-6 lg:px-8 py-6'>
 				{/* Filters: branch_category + product_model + product_type (type by model) */}
 				{(branchCategories.length > 0 || productModelsAll.length > 0 || productTypesRaw.length > 0) && (
-					<div className='mb-6 flex flex-wrap items-center gap-3'>
-						<div className='flex items-center gap-2 text-gray-500'>
+					<div className='mb-6 flex flex-wrap items-center gap-2'>
+						<div className='flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-500 sm:flex-none'>
 							<Filter size={18} strokeWidth={2} />
-							<span className='text-sm font-medium'>Filter</span>
 						</div>
-						<div className='flex flex-wrap items-center gap-2'>
-							<FilterSelect
-								placeholder='Kategoriya turi — barchasi'
+						<FilterSelect
+							placeholder='Kategoriya turi — barchasi'
 								value={
 									selectedBranchCategoryId === undefined
 										? undefined
@@ -225,13 +223,13 @@ export function ShopPage() {
 								onValueChange={(v) =>
 									setSelectedBranchCategoryId(v === undefined ? undefined : Number(v))
 								}
-								options={branchCategories
-									.filter((c) => !c.is_delete)
-									.sort((a, b) => a.sorting - b.sorting)
-									.map((c) => ({ value: String(c.id), label: c.name }))}
-							/>
-							<FilterSelect
-								placeholder='Model — barchasi'
+							options={branchCategories
+								.filter((c) => !c.is_delete)
+								.sort((a, b) => a.sorting - b.sorting)
+								.map((c) => ({ value: String(c.id), label: c.name }))}
+						/>
+						<FilterSelect
+							placeholder='Model — barchasi'
 								value={selectedModelId === undefined ? undefined : String(selectedModelId)}
 								onValueChange={(v) => setSelectedModelId(v === undefined ? undefined : Number(v))}
 								options={(selectedBranchCategoryId ? productModels : productModelsAll)
@@ -260,7 +258,6 @@ export function ShopPage() {
 									<X size={18} strokeWidth={2.5} />
 								</button>
 							)}
-						</div>
 					</div>
 				)}
 

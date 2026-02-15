@@ -3,6 +3,7 @@ import * as Select from '@radix-ui/react-select';
 import { ChevronDown, Search } from 'lucide-react';
 
 const ALL_VALUE = 'all';
+const MOBILE_CLOSE_GUARD_MS = 400; // mobil: ochilgandan keyin bu vaqt davomida "tashqariga" bosishni e'tiborsiz qoldirish
 
 export interface FilterSelectOption {
 	value: string;
@@ -27,6 +28,7 @@ export function FilterSelect({
 	const [open, setOpen] = useState(false);
 	const [search, setSearch] = useState('');
 	const inputRef = useRef<HTMLInputElement>(null);
+	const openedAtRef = useRef<number>(0);
 
 	const selectValue = value === undefined || value === '' ? ALL_VALUE : value;
 	const allOption = { value: ALL_VALUE, label: placeholder };
@@ -42,9 +44,10 @@ export function FilterSelect({
 	// Focus search input when dropdown opens, clear search when closes
 	useEffect(() => {
 		if (open) {
+			openedAtRef.current = Date.now();
 			setSearch('');
-			// Let Radix finish opening then focus input
-			const t = setTimeout(() => inputRef.current?.focus(), 0);
+			// Mobil: focus biroz kechiktriladi, ochilish barqaror bo'lsin
+			const t = setTimeout(() => inputRef.current?.focus(), 150);
 			return () => clearTimeout(t);
 		}
 	}, [open]);
@@ -70,12 +73,18 @@ export function FilterSelect({
 					/>
 				</Select.Icon>
 			</Select.Trigger>
-			<Select.Portal>
+			<Select.Portal container={typeof document !== 'undefined' ? document.getElementById('root') : undefined}>
 				<Select.Content
 					position='popper'
 					sideOffset={4}
 					className='z-50 w-[var(--radix-select-trigger-width)] min-w-[200px] overflow-hidden rounded-xl border border-gray-200 bg-white shadow-lg'
 					onCloseAutoFocus={(e) => e.preventDefault()}
+					onPointerDownOutside={(e) => {
+						// Mobil: ochilgandan keyin qisqa vaqt "ghost" tap bilan yopilishini oldini olish
+						if (Date.now() - openedAtRef.current < MOBILE_CLOSE_GUARD_MS) {
+							e.preventDefault();
+						}
+					}}
 				>
 					<div className='border-b border-gray-100 p-2'>
 						<div className='relative'>
@@ -89,6 +98,8 @@ export function FilterSelect({
 								value={search}
 								onChange={(e) => setSearch(e.target.value)}
 								onKeyDown={(e) => e.stopPropagation()}
+								onPointerDown={(e) => e.stopPropagation()}
+								onTouchStart={(e) => e.stopPropagation()}
 								placeholder='Qidirish...'
 								className='w-full rounded-lg border border-gray-200 py-2 pl-8 pr-3 text-sm placeholder:text-gray-400 focus:border-market-orange focus:outline-none focus:ring-1 focus:ring-market-orange/30'
 							/>

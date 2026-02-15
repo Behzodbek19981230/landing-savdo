@@ -1,5 +1,12 @@
 import { apiClient } from './axios';
-import { ApiResponse, ApiCategory, ApiProduct, ApiProductBranchCategory, ApiProductModel, ApiProductType } from './types';
+import {
+	ApiResponse,
+	ApiCategory,
+	ApiProduct,
+	ApiProductBranchCategory,
+	ApiProductModel,
+	ApiProductType,
+} from './types';
 
 // Categories API (product branches)
 export const categoriesApi = {
@@ -65,7 +72,7 @@ export const productsApi = {
 		if (search && search.trim()) params.search = search.trim();
 		if (branchCategoryId) params.branch_category = branchCategoryId;
 		if (modelId) params.model = modelId;
-		if (productTypeId) params.product_type = productTypeId;
+		if (productTypeId) params.type = productTypeId;
 		const response = await apiClient.get<ApiResponse<ApiProduct>>('/product/public', { params });
 		return response.data;
 	},
