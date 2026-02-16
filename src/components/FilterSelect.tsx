@@ -284,20 +284,50 @@ export function FilterSelect({
 										value={String(option.value)}
 										disabled={false}
 										onSelect={handleSelect}
-										onClick={(e) => {
-											// Click event'ni ham qo'llab-quvvatlash
-											e.preventDefault();
-											e.stopPropagation();
-											handleSelect();
-										}}
 										onPointerDown={(e) => {
-											// PointerDown event'ni ham qo'llab-quvvatlash
-											e.preventDefault();
-											e.stopPropagation();
-											handleSelect();
+											const pe = e as React.PointerEvent;
+											const el = e.currentTarget as HTMLElement;
+											if (pe.pointerType === 'touch') {
+												el.dataset.__startX = String(pe.clientX);
+												el.dataset.__startY = String(pe.clientY);
+												el.dataset.__moved = '0';
+											} else {
+												e.preventDefault();
+												e.stopPropagation();
+											}
+										}}
+										onPointerMove={(e) => {
+											const pe = e as React.PointerEvent;
+											const el = e.currentTarget as HTMLElement;
+											if (pe.pointerType === 'touch') {
+												const sx = Number(el.dataset.__startX || 0);
+												const sy = Number(el.dataset.__startY || 0);
+												if (Math.abs(pe.clientX - sx) > 6 || Math.abs(pe.clientY - sy) > 6) {
+													el.dataset.__moved = '1';
+												}
+											}
+										}}
+										onPointerUp={(e) => {
+											const pe = e as React.PointerEvent;
+											const el = e.currentTarget as HTMLElement;
+											if (pe.pointerType === 'touch') {
+												const moved = el.dataset.__moved === '1';
+												if (!moved) {
+													e.preventDefault();
+													e.stopPropagation();
+													handleSelect();
+												}
+												delete el.dataset.__startX;
+												delete el.dataset.__startY;
+												delete el.dataset.__moved;
+											} else {
+												e.preventDefault();
+												e.stopPropagation();
+												handleSelect();
+											}
 										}}
 										className={cn(
-											'cursor-pointer rounded-lg py-1 pl-1 pr-2 text-xs outline-none',
+											'cursor-pointer rounded-lg py-2 pl-1 pr-2 text-xs outline-none',
 											selectValue === option.value
 												? 'bg-market-orange/10 text-market-orange'
 												: 'hover:bg-market-orange/5',
