@@ -209,54 +209,53 @@ export function ShopPage() {
 				{/* Filters: branch_category + product_model + product_type (type by model) */}
 				{(branchCategories.length > 0 || productModelsAll.length > 0 || productTypesRaw.length > 0) && (
 					<div className='mb-6 flex flex-wrap items-center gap-2'>
-						<div className='flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-500 sm:flex-none'>
-							<Filter size={18} strokeWidth={2} />
+						<div className='flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-500'>
+							<Filter size={16} strokeWidth={2} />
 						</div>
 						<FilterSelect
+							className='max-w-64'
 							placeholder='Kategoriya turi — barchasi'
-								value={
-									selectedBranchCategoryId === undefined
-										? undefined
-										: String(selectedBranchCategoryId)
-								}
-								onValueChange={(v) =>
-									setSelectedBranchCategoryId(v === undefined ? undefined : Number(v))
-								}
+							value={
+								selectedBranchCategoryId === undefined ? undefined : String(selectedBranchCategoryId)
+							}
+							onValueChange={(v) => setSelectedBranchCategoryId(v === undefined ? undefined : Number(v))}
 							options={branchCategories
 								.filter((c) => !c.is_delete)
 								.sort((a, b) => a.sorting - b.sorting)
 								.map((c) => ({ value: String(c.id), label: c.name }))}
 						/>
 						<FilterSelect
+							className='max-w-44 text-wrap'
 							placeholder='Model — barchasi'
-								value={selectedModelId === undefined ? undefined : String(selectedModelId)}
-								onValueChange={(v) => setSelectedModelId(v === undefined ? undefined : Number(v))}
-								options={(selectedBranchCategoryId ? productModels : productModelsAll)
-									.sort((a, b) => a.sorting - b.sorting || a.name.localeCompare(b.name))
-									.map((m) => ({ value: String(m.id), label: m.name }))}
-							/>
-							<FilterSelect
-								placeholder='Turi — barchasi'
-								value={selectedProductTypeId === undefined ? undefined : String(selectedProductTypeId)}
-								onValueChange={(v) => setSelectedProductTypeId(v === undefined ? undefined : Number(v))}
-								options={productTypes.map((t) => ({ value: String(t.id), label: t.name }))}
-							/>
-							{(selectedBranchCategoryId !== undefined ||
-								selectedModelId !== undefined ||
-								selectedProductTypeId !== undefined) && (
-								<button
-									type='button'
-									onClick={() => {
-										setSelectedBranchCategoryId(undefined);
-										setSelectedModelId(undefined);
-										setSelectedProductTypeId(undefined);
-									}}
-									title='Tozalash'
-									className='flex h-10 w-10 shrink-0 items-center justify-center rounded-xl border border-gray-200 bg-white text-gray-600 shadow-sm transition-all hover:bg-gray-50 hover:text-market-orange'
-								>
-									<X size={18} strokeWidth={2.5} />
-								</button>
-							)}
+							value={selectedModelId === undefined ? undefined : String(selectedModelId)}
+							onValueChange={(v) => setSelectedModelId(v === undefined ? undefined : Number(v))}
+							options={(selectedBranchCategoryId ? productModels : productModelsAll)
+								.sort((a, b) => a.sorting - b.sorting || a.name.localeCompare(b.name))
+								.map((m) => ({ value: String(m.id), label: m.name }))}
+						/>
+						<FilterSelect
+							className='max-w-44 text-wrap'
+							placeholder='Turi — barchasi'
+							value={selectedProductTypeId === undefined ? undefined : String(selectedProductTypeId)}
+							onValueChange={(v) => setSelectedProductTypeId(v === undefined ? undefined : Number(v))}
+							options={productTypes.map((t) => ({ value: String(t.id), label: t.name }))}
+						/>
+						{(selectedBranchCategoryId !== undefined ||
+							selectedModelId !== undefined ||
+							selectedProductTypeId !== undefined) && (
+							<button
+								type='button'
+								onClick={() => {
+									setSelectedBranchCategoryId(undefined);
+									setSelectedModelId(undefined);
+									setSelectedProductTypeId(undefined);
+								}}
+								title='Tozalash'
+								className='flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-gray-200 bg-white text-gray-600 shadow-sm transition-all hover:bg-gray-50 hover:text-market-orange'
+							>
+								<X size={16} strokeWidth={2.5} />
+							</button>
+						)}
 					</div>
 				)}
 
